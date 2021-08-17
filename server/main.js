@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { FlashcardCollection } from '/imports/db/FlashcardCollection';
-import { Flashcard } from '/imports/db/Flashcard';
 
 const exampleCollections = [
   {
