@@ -1,9 +1,11 @@
 import React, { useRef } from 'react';
 import { useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import Flip from './Flip';
+import { Flip } from './Flip';
 import { Form, Button } from 'react-bootstrap'
 import { useForm } from 'react-hook-form';
+import { FlashcardCollection } from '/imports/db/FlashcardCollection';
+import { Random } from 'meteor/random'
 
 export function NewFlashcard(props) {
   const { register, handleSubmit, reset } = useForm();
@@ -25,7 +27,11 @@ export function NewFlashcard(props) {
     }
   }
 
-  function createHandler(data) {
+  async function createHandler(data) {
+    data._id = Random.id();
+    data.createdAt = new Date();
+    await FlashcardCollection.update({_id: props.collectionId}, {$push: {flashcards: data}});
+
     reset();
     setFlipped(false);
     cardRef.current.querySelector('.flashcard-front textarea').select();

@@ -17,7 +17,7 @@ export function CollectionExplorer(props) {
     <Col lg="10">
       { collections.map(c => (
         <Route key={c._id} path={`/collections/${c._id}`}>
-          <Collection name={c.name} flashcards={c.flashcards}/>
+          <Collection name={c.name} collectionId={c._id} flashcards={c.flashcards}/>
         </Route>
       )) }
     </Col>

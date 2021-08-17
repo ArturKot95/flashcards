@@ -18,13 +18,16 @@ export function Flashcard(props) {
     });
   }, []);
 
+  useEffect(() => {
+    if (checked) {
+      props.onChecked && props.onChecked(props.flashcard);
+    } else {
+      props.onUnchecked && props.onUnchecked(props.flashcard);
+    }
+  }, [checked]);
+
   function onCardClick(e) {
     setChecked(!checked);
-    if (checked) {
-      props.onChecked && props.onChecked(props.flashcard)
-    } else {
-      props.onUnchecked && props.onUnchecked(props.flashcard)
-    }
   }
 
   return <div className="position-relative" ref={cardRef} onClick={(e) => onCardClick(e)}>
