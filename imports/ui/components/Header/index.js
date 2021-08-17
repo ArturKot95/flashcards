@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navbar, Container, Button, Nav } from 'react-bootstrap';
 import { useTracker } from 'meteor/react-meteor-data';
 import { FlashcardCollection } from '/imports/db/FlashcardCollection';
 import { Link } from 'react-router-dom';
 import './header.css';
+import { NewCollectionModal } from '../Modals/NewCollectionModal';
 
 export function Header(props) {
+  let [showModal, setShowModal] = useState(false);
+
   const collections = useTracker(() => 
     FlashcardCollection.find({}).fetch()
   );
@@ -27,7 +30,10 @@ export function Header(props) {
           }
         </Nav>
 
-        <Button variant="success"><i className="bi bi-file-plus-fill"></i> Collection</Button>
+        <Button variant="success" onClick={() => setShowModal(true)}>
+          <i className="bi bi-file-plus-fill"></i> Collection
+        </Button>
+        <NewCollectionModal show={showModal} onHide={() => setShowModal(false)}/>
       </Navbar.Collapse>
 
     </Container>

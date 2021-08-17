@@ -11,16 +11,26 @@
   bottom: 5px;
 }
 
-.flashcard-checkbox {
+.flashcard-toolbar {
   position: absolute;
   z-index: 999;
   top: 5px;
-  left: 10px;
-  width: 32px;
-  height: 32px;
+  left: 5px;
 }
 
-.flashcard-checkbox input {
+.flashcard-toolbar input[type="checkbox"] {
   width: 20px;
   height: 20px;
+}
+
+.flashcard-toolbar .form-check {
+  margin-right: 0;
+  position: relative;
+  top: 2px;
+}
+
+.flashcard-toolbar .edit-button {
+  width: 20px;
+  height: 20px;
+  padding: 0;
 }

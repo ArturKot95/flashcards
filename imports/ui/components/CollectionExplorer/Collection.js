@@ -4,7 +4,7 @@ import { Row, Col } from 'react-bootstrap';
 import { CollectionToolbar } from './CollectionToolbar';
 import { FlashcardCollection } from '/imports/db/FlashcardCollection';
 
-export function Collection({ name, collectionId, flashcards, onChecked, onUnchecked }) {
+export function Collection({ name, collectionId, flashcards }) {
   let [selectedFlashcards, setSelectedFlashcards] = useState([]);
 
   function selectFlashcard(f) {
@@ -24,7 +24,7 @@ export function Collection({ name, collectionId, flashcards, onChecked, onUnchec
   async function removeFlashcard(id) {
     await FlashcardCollection.update({ _id: collectionId }, {
       $pull: {
-        flashcards: {_id: id}
+        flashcards: { _id: id }
       }
     })
   }
