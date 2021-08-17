@@ -10,16 +10,10 @@ export function CollectionExplorer(props) {
   const collections = useTracker(() => FlashcardCollection.find({}).fetch());
 
   return <Row>
-    <Col lg="2">
-      <span className="h6 d-inline-block mb-3">Your collections</span>
-      <CollectionList collections={collections}/>
-    </Col>
-    <Col lg="10">
-      { collections.map(c => (
-        <Route key={c._id} path={`/collections/${c._id}`}>
-          <Collection name={c.name} collectionId={c._id} flashcards={c.flashcards}/>
-        </Route>
-      )) }
-    </Col>
+    { collections.map(c => (
+      <Route key={c._id} path={`/collections/${c._id}`}>
+        <Collection name={c.name} collectionId={c._id} flashcards={c.flashcards}/>
+      </Route>
+    )) }
   </Row>
 }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Flashcard, NewFlashcard } from '/imports/ui/components';
 import { Row, Col } from 'react-bootstrap';
 import { CollectionToolbar } from './CollectionToolbar';
+import { FlashcardCollection } from '/imports/db/FlashcardCollection';
 
 export function Collection({ name, collectionId, flashcards, onChecked, onUnchecked }) {
   let [selectedFlashcards, setSelectedFlashcards] = useState([]);
@@ -16,9 +17,24 @@ export function Collection({ name, collectionId, flashcards, onChecked, onUnchec
     );
   }
 
+  async function removeFlashcards(flashcards) {
+    await Promise.all(flashcards.map(f => removeFlashcard(f._id)));
+  }
+
+  async function removeFlashcard(id) {
+    await FlashcardCollection.update({ _id: collectionId }, {
+      $pull: {
+        flashcards: {_id: id}
+      }
+    })
+  }
+
   return <>
-    <div className="display-6 mb-3">{ name }</div>
-    <CollectionToolbar show={selectedFlashcards.length > 0 ? true : false} />
+    <div className="h5">{ name }</div>
+    <CollectionToolbar 
+      active={selectedFlashcards.length > 0 ? true : false} 
+      onRemove={() => removeFlashcards(selectedFlashcards)}
+    />
     <Row>
       <Col lg="3">
         <NewFlashcard collectionId={collectionId}/>
