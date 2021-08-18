@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { Flashcard, NewFlashcard } from '/imports/ui/components';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Form } from 'react-bootstrap';
 import { CollectionToolbar } from './CollectionToolbar';
 import { FlashcardCollection } from '/imports/db/FlashcardCollection';
+import { useHistory } from 'react-router-dom';
 
 export function Collection({ name, collectionId, flashcards }) {
+  const history = useHistory();
   let [selectedFlashcards, setSelectedFlashcards] = useState([]);
+
+  let [editNameMode, setEditNameMode] = useState(false);
+  let [collectionName, setCollectionName] = useState(name);
 
   function selectFlashcard(f) {
     setSelectedFlashcards([...selectedFlashcards, f]);
@@ -29,11 +34,39 @@ export function Collection({ name, collectionId, flashcards }) {
     })
   }
 
+  async function removeCollection() {
+    await FlashcardCollection.remove({ _id: collectionId });
+    history.push('/collections');
+  }
+
+  async function changeName() {
+    await FlashcardCollection.update({ _id: collectionId }, {
+      $set: { name: collectionName }
+    });
+    setEditNameMode(false);
+  }
+
   return <>
-    <div className="h5">{ name }</div>
+    { editNameMode 
+    ?
+      <Form onSubmit={e => {
+        changeName();
+        e.preventDefault();
+      }}>
+        <Form.Control
+          autoFocus 
+          onChange={(e) => setCollectionName(e.target.value)} 
+          value={collectionName} 
+          onBlur={(e) => changeName(e)}
+        />
+      </Form>
+    :
+      <div className="h5" onClick={() => setEditNameMode(true)}>{ collectionName }</div>
+    }
     <CollectionToolbar 
       active={selectedFlashcards.length > 0 ? true : false} 
-      onRemove={() => removeFlashcards(selectedFlashcards)}
+      onFlashcardRemove={() => removeFlashcards(selectedFlashcards)}
+      onCollectionRemove={() => removeCollection()}
     />
     <Row>
       <Col lg="3">
