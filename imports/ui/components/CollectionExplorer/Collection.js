@@ -32,6 +32,8 @@ export function Collection({ name, collectionId, flashcards }) {
         flashcards: { _id: id }
       }
     })
+
+    setSelectedFlashcards([]);
   }
 
   async function removeCollection() {
@@ -75,7 +77,7 @@ export function Collection({ name, collectionId, flashcards }) {
       { flashcards.map(f => (
         <Col key={f._id} lg="3">
           <Flashcard 
-            flashcard={f}
+            flashcard={{...f, collectionId}}
             onChecked={(f) => selectFlashcard(f)} 
             onUnchecked={(f) => unselectFlashcard(f)}
           />
