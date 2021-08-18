@@ -31,6 +31,10 @@ export function Flashcard(props) {
     setChecked(!checked);
   }
 
+  function onEditButtonClick(e) {
+    e.stopPropagation();
+  }
+
   return <div 
     className="position-relative"
     onClick={(e) => onCardClick(e)}
@@ -44,7 +48,7 @@ export function Flashcard(props) {
         <Button size="sm" variant="outline-primary">
           <Form.Check inline readOnly={true} checked={checked}/>
         </Button>
-        <Button size="sm" variant="outline-primary">
+        <Button size="sm" variant="outline-primary" onClick={(e) => onEditButtonClick(e)}>
           <i className="bi bi-pencil-fill"></i>
         </Button>
       </ButtonGroup>
