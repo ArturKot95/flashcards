@@ -1,3 +1,4 @@
+import { Meteor} from 'meteor/meteor';
 import React, { useEffect, useRef } from 'react';
 import { useState } from 'react';
 import { Button, Form, ButtonGroup } from 'react-bootstrap';
@@ -41,7 +42,7 @@ export function Flashcard(props) {
 
   async function editFlashcard(data) {
     const { front, back } = data;
-    window.alert('edit');
+    Meteor.call('flashcard.edit', props.flashcard._id, { front, back });
     setEditMode(false);
   }
 

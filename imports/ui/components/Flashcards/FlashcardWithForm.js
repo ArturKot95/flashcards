@@ -36,7 +36,7 @@ const FlashcardWithForm = React.forwardRef((props, forwardedRef) => {
 
     reset();
     setFlipped(false);
-    cardRef.current.querySelector('.flashcard-front textarea').select();
+    // cardRef.current.querySelector('.flashcard-front textarea').select();
   }
 
   return <Form>
