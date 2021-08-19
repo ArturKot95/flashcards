@@ -69,6 +69,7 @@ export function Collection({ name, collectionId, flashcards }) {
       active={selectedFlashcards.length > 0 ? true : false} 
       onFlashcardRemove={() => removeFlashcards(selectedFlashcards)}
       onCollectionRemove={() => removeCollection()}
+      onLearn={() => history.push(`/collections/${collectionId}/study`)}
     />
     <Row>
       <Col lg="3">
