@@ -3,19 +3,17 @@ import { FlashcardCollection } from '/imports/db/FlashcardCollection';
 
 Meteor.methods({
   'flashcard.edit': async (id, {front, back}) => {
-    if (Meteor.isServer) {
-      FlashcardCollection.rawCollection().updateMany({}, {
-        $set: {
-          "flashcards.$[element].front": front,
-          "flashcards.$[element].back": back
+    FlashcardCollection.rawCollection().updateMany({}, {
+      $set: {
+        "flashcards.$[element].front": front,
+        "flashcards.$[element].back": back
+      }
+    }, {
+      arrayFilters: [
+        {
+          "element._id": id
         }
-      }, {
-        arrayFilters: [
-          {
-            "element._id": id
-          }
-        ]
-      })
-    }
+      ]
+    })
   }
 });
