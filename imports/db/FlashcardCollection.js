@@ -6,6 +6,10 @@ const FlashcardCollection = new Mongo.Collection('collections');
 
 const schema = new SimpleSchema({
   _id: { type: String },
+  summary: { 
+    type: Object,
+    defaultValue: { due: 0, later: 0, learning: 0, overdue: 0 }
+   },
   name: { type: String },
   flashcards: {
     type: Array,

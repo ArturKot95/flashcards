@@ -22,7 +22,7 @@ export function CollectionToolbar({ active, onFlashcardRemove, onCollectionRemov
     </ButtonGroup>
 
   <ButtonGroup className="mx-2" size="sm">
-    <Button onClick={onLearn}>Learn</Button>
+    <Button onClick={onLearn}>Study</Button>
   </ButtonGroup>
 
     <Button size="sm" className="ms-auto" variant="secondary" 

@@ -1,10 +1,9 @@
 import { Meteor} from 'meteor/meteor';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Button, Form, ButtonGroup } from 'react-bootstrap';
 import { Flip } from './Flip';
 import { FlashcardWithForm } from './FlashcardWithForm';
-import { FlashcardCollection } from '/imports/db/FlashcardCollection'
 import './Flashcard.css';
 
 export function Flashcard(props) {
