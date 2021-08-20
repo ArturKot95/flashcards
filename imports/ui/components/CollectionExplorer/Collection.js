@@ -5,7 +5,7 @@ import { CollectionToolbar } from './CollectionToolbar';
 import { FlashcardCollection } from '/imports/db/FlashcardCollection';
 import { useHistory } from 'react-router-dom';
 
-export function Collection({ name, collectionId, flashcards }) {
+export function Collection({ name, collectionId, flashcards = [] }) {
   const history = useHistory();
   let [selectedFlashcards, setSelectedFlashcards] = useState([]);
 
@@ -38,7 +38,7 @@ export function Collection({ name, collectionId, flashcards }) {
 
   async function removeCollection() {
     await FlashcardCollection.remove({ _id: collectionId });
-    history.push('/collections');
+    history.push('/');
   }
 
   async function changeName() {
@@ -69,6 +69,7 @@ export function Collection({ name, collectionId, flashcards }) {
       active={selectedFlashcards.length > 0 ? true : false} 
       onFlashcardRemove={() => removeFlashcards(selectedFlashcards)}
       onCollectionRemove={() => removeCollection()}
+      onLearn={() => history.push(`/collections/${collectionId}/study`)}
     />
     <Row>
       <Col lg="3">

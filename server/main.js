@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { FlashcardCollection } from '/imports/db/FlashcardCollection';
+import '/imports/api/flashcardMethods';
 
 const exampleCollections = [
   {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ButtonToolbar, ButtonGroup, Button } from 'react-bootstrap';
 import { ConfirmModal } from '/imports/ui/components';
 
-export function CollectionToolbar({ active, onFlashcardRemove, onCollectionRemove }) {
+export function CollectionToolbar({ active, onFlashcardRemove, onCollectionRemove, onLearn }) {
   let [showConfirm, setShowConfirm] = useState(false);
 
   function onConfirm() {
@@ -20,6 +20,11 @@ export function CollectionToolbar({ active, onFlashcardRemove, onCollectionRemov
         <i className="bi bi-trash me-1"></i>Remove
       </Button>
     </ButtonGroup>
+
+  <ButtonGroup className="mx-2" size="sm">
+    <Button onClick={onLearn}>Study</Button>
+  </ButtonGroup>
+
     <Button size="sm" className="ms-auto" variant="secondary" 
       onClick={() => setShowConfirm(true)}>Remove Collection</Button>
     { showConfirm &&

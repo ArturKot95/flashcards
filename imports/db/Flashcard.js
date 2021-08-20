@@ -13,10 +13,12 @@ const schema = new SimpleSchema({
     }
   },
   front: {
-    type: String
+    type: String,
+    optional: true
   },
   back: {
-    type: String
+    type: String,
+    optional: true
   },
   createdAt: {
     type: Date,
