@@ -13,7 +13,7 @@ export function NewCollectionModal(props) {
     props.onHide();
   }
 
-  return <Modal show={props.show} onHide={onHide}>
+  return <Modal show={props.show} onHide={onHide} animation={false}>
     <Modal.Header>
       <Modal.Title>New collection</Modal.Title>
     </Modal.Header>
@@ -21,7 +21,7 @@ export function NewCollectionModal(props) {
     <Modal.Body>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="name">Name</label>
-        <Form.Control id="name" placeholder="E.g. English..."
+        <Form.Control autoFocus id="name" placeholder="E.g. English..."
           {...register('name', { required: true })} />
       </Form>
     </Modal.Body>
