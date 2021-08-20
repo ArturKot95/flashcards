@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
+import { Random } from 'meteor/random';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { FlashcardCollection } from '/imports/db/FlashcardCollection';
+import { useHistory } from 'react-router';
 
 export function NewCollectionModal(props) {
   let onHide = props.onHide || null;
+  const history = useHistory();
   const { register, handleSubmit, reset } = useForm();
 
   async function onSubmit({ name }) {
-    await FlashcardCollection.insert({ name });
+    const _id = Random.id();
+    await FlashcardCollection.insert({ _id, name });
+    history.push(`/collections/${_id}`);
     reset();
     props.onHide();
   }

@@ -10,10 +10,9 @@ export function StudyCollection({ collectionId }) {
   let [flipped, setFlipped] = useState(false);
   let [ended, setEnded] = useState(false);
 
-  let { summary, flashcards } = useTracker(() => {
+  let { flashcards } = useTracker(() => {
     const collection = FlashcardCollection.find({_id: collectionId}).fetch()[0];
     return {
-      summary: collection.summary,
       flashcards: collection.flashcards
     }
   });
@@ -32,6 +31,7 @@ export function StudyCollection({ collectionId }) {
   }
 
   function sendReview(review) {
+
     nextCard();
   }
 
