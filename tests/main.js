@@ -1,9 +1,10 @@
 import assert from "assert";
+import { expect } from 'chai';
 
 describe("flashcards-meteor", function () {
   it("package.json has correct name", async function () {
     const { name } = await import("../package.json");
-    assert.strictEqual(name, "flashcards-meteor");
+    expect(name).equals('flashcards-meteor');
   });
 
   if (Meteor.isClient) {

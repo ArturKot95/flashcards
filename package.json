@@ -4,6 +4,7 @@
   "scripts": {
     "start": "meteor run",
     "test": "meteor test --once --driver-package meteortesting:mocha",
+    "test:watch": "TEST_WATCH=1 meteor test --driver-package meteortesting:mocha",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
     "visualize": "meteor --production --extra-packages bundle-visualizer"
   },
@@ -28,6 +29,7 @@
     "testModule": "tests/main.js"
   },
   "devDependencies": {
-    "babel-plugin-module-resolver": "^4.1.0"
+    "babel-plugin-module-resolver": "^4.1.0",
+    "chai": "^4.3.4"
   }
 }
