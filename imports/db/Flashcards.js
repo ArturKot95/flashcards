@@ -12,7 +12,20 @@ const schema = new SimpleSchema({
     autoValue: function () {
       if (this.isInsert) return new Date();
     }
-  }
+  },
+  reviews: {
+    type: Array,
+    defaultValue: []
+  },
+  'reviews.$': new SimpleSchema({
+    master: String,
+    combination: {
+      type: Object,
+      blackbox: true
+    },
+    ts: Date,
+    rating: String
+  })
 });
 
 Flashcards.attachSchema(schema);
