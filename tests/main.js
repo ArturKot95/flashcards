@@ -4,7 +4,7 @@ import { expect } from 'chai';
 describe("flashcards-meteor", function () {
   it("package.json has correct name", async function () {
     const { name } = await import("../package.json");
-    expect(name).equals('flashcards-meteor');
+    expect(name).equals('flashcards');
   });
 
   if (Meteor.isClient) {
