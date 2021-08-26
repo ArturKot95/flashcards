@@ -1,9 +1,6 @@
 import { Factory } from 'meteor/dburles:factory';
-import faker from 'faker';
-import { Flashcards } from './Flashcards';
+import { Collections } from './Collections';
 
-Factory.define('flashcard', Flashcards, {
-  front: faker.lorem.word(),
-  back: faker.lorem.word(),
-  collection: 'Test Collection'
+Factory.define('collection', Collections, {
+  name: 'Test'
 });
