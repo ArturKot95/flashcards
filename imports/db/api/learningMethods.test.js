@@ -12,8 +12,6 @@ describe('Learning flashcards', function() {
   let instanceId;
 
   before(async function () {
-    resetDatabase();
-
     Factory.create('collection');
 
     const { _id } = await Collections.find({name: 'Test'}).fetch()[0];
@@ -32,9 +30,6 @@ describe('Learning flashcards', function() {
     }
   });
 
-  after(function () {
-    resetDatabase();
-  })
 
   it('Should be 10 cards in Test collection', async function () {
     const doc = await Collections.find({ name: 'Test' }).fetch()[0];
