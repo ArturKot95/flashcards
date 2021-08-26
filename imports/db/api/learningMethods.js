@@ -1,21 +1,29 @@
 import { instanceManager, convertToMaster } from '/server/dolphinsr';
-import { Flashcards } from '/imports/db/Flashcards';
+import { Collections } from '/imports/db/Collections';
 
 Meteor.methods({
-  'flashcards.learn'(flashcards) {
+  'learn.start'(flashcards) {
     let { id, instance } = instanceManager.create();
     const masters = convertToMaster(flashcards);
     instance.addMasters(...masters);
     return id;
   },
-  'learning.addReview'(instanceId, id, review) {
+  'learn.addReview'(instanceId, id, review) {
     const instance = instanceManager.get(instanceId);
     instance.addReviews(review);
-    Flashcards.update({_id: id}, {$push: {
-      reviews: review
-    }});
+    Collections.rawCollection().updateMany({}, {
+      $push: {
+        'flashcards.$[element].reviews': review
+      }
+    }, {
+      arrayFilters: [
+        {
+          'element._id': id
+        }
+      ]
+    })
   },
-  'learning.nextCard'(instanceId) {
+  'learn.nextCard'(instanceId) {
     const instance = instanceManager.get(instanceId);
     return instance.nextCard();
   }

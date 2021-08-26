@@ -1,28 +1,61 @@
 import { Meteor } from 'meteor/meteor';
-import { Flashcards } from '/imports/db/Flashcards';
+import { Random } from 'meteor/random';
+import { Collections } from '/imports/db/Collections';
 
 Meteor.methods({
-  'flashcards.add'(collection, front, back) {
-    Flashcards.insert({
-      collection,
-      front,
-      back
+  'flashcard.add'(collectionId, front, back) {
+    Collections.update({_id: collectionId}, {
+      $push: {
+        flashcards: {
+          _id: Random.id(),
+          front,
+          back,
+          createdAt: new Date()
+        }
+      }
     });
   },
-  'flashcards.remove'(_id) {
-    Flashcards.remove({ _id });
+  'flashcard.remove'(_id) {
+    Collections.update({}, {
+      $pull: {
+        flashcards: { _id }
+      }
+    }, {
+      multi: true
+    });
   },
-  'flashcards.edit'(_id, { front, back }) {
+  'flashcard.edit'(_id, { front, back }) {
     let change = {};
-    if (front) change.front = front;
-    if (back) change.back = back;
+    if (front) change['flashcards.$[element].front'] = front;
+    if (back) change['flashcards.$[element].back'] = back;
 
-    Flashcards.update({ _id }, { $set: change });
+    Collections.rawCollection().updateMany({}, {
+      $set: change
+    }, {
+      arrayFilters: [
+        {
+          "element._id": _id
+        }
+      ]
+    })
   },
-  'flashcards.changeCollection'(_id, newCollection) {
-    Flashcards.update({_id}, { 
-      $set: {
-        collection: newCollection
+  'flashcard.moveToCollection'(_id, collectionId) {
+    const doc = Collections.findOne({ 'flashcards._id': _id }, {
+      fields: { flashcards: {
+        $elemMatch: { _id }
+      }}
+    });
+
+    let flashcard = doc.flashcards[0];
+    Collections.update({}, {
+      $pull: {
+        flashcards: { _id }
+      }
+    });
+
+    Collections.update({_id: collectionId}, {
+      $push: {
+        flashcards: flashcard
       }
     });
   }

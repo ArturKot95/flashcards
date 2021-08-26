@@ -1,8 +1,9 @@
+import { Random } from 'meteor/random';
 import { expect } from 'chai';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 import '/imports/db/factories';
 import { Factory } from 'meteor/dburles:factory';
-import { Flashcards } from '/imports/db/Flashcards';
+import { Collections } from '/imports/db/Collections';
 import { instanceManager } from '/server/dolphinsr';
 import './learningMethods';
 
@@ -10,27 +11,41 @@ describe('Learning flashcards', function() {
   let flashcards;
   let instanceId;
 
-  before(function () {
+  before(async function () {
     resetDatabase();
 
+    Factory.create('collection');
+
+    const { _id } = await Collections.find({name: 'Test'}).fetch()[0];
+
     for (let i = 0; i < 10; i++) {
-      Factory.create('flashcard', { 
-        front: `front ${i+1}`,
-        back: `back ${i+1}`
-       });
+      Collections.update({_id}, {
+        $push: {
+          flashcards: {
+            _id: Random.id(),
+            front: `front ${i+1}`,
+            back: `back ${i+1}`,
+            createdAt: new Date()
+          }
+        }
+      });
     }
   });
 
-  it('Should be 10 cards in Test Collection', async function () {
-    const docs = Flashcards.find({ collection: 'Test Collection' }).fetch();
-    expect(docs).to.have.length(10);
-    expect(docs[0].front).to.equals('front 1');
-    expect(docs[0].back).to.equals('back 1');
-    flashcards = docs;
+  after(function () {
+    resetDatabase();
+  })
+
+  it('Should be 10 cards in Test collection', async function () {
+    const doc = await Collections.find({ name: 'Test' }).fetch()[0];
+    expect(doc.flashcards).to.have.length(10);
+    expect(doc.flashcards[0].front).to.equals('front 1');
+    expect(doc.flashcards[0].back).to.equals('back 1');
+    flashcards = doc.flashcards;
   });
 
-  it('Should create dolphin instance from "flashcards.learn" method', function () {
-    instanceId = Meteor.call('flashcards.learn', flashcards);
+  it('Should create dolphin instance from "learn.start" method', function () {
+    instanceId = Meteor.call('learn.start', flashcards);
     const instance = instanceManager.get(instanceId);
     expect(instance).to.not.be.undefined;
     expect(instanceId).to.not.be.undefined;
@@ -44,10 +59,6 @@ describe('Learning flashcards', function() {
   });
 
   describe('Adding reviews explicitly in dolphin instance', function () {
-    after(function() {
-      Flashcards.update({}, {$set: {reviews: []}});
-    });
-
     let cards = [];
 
     it('Should add "again" review to collection and dolphin instance', async function () {
@@ -61,15 +72,18 @@ describe('Learning flashcards', function() {
         rating: 'again'
       };
       instance.addReviews(review);
-      await Flashcards.update({_id: card.master}, {$push: {
-        reviews: review
-      }});
+
+      await Collections.update({'flashcards._id': card.master}, {
+        $push: {
+          'flashcards.$.reviews': review
+        }
+      });
    
       expect(instance.summary().learning).equals(20);
     });
 
-    it('Should get next card from instance by invoking "sessions.nextCard" method', function () {
-      let card = Meteor.call('learning.nextCard', instanceId);
+    it('Should get next card from instance by invoking "learn.nextCard" method', function () {
+      let card = Meteor.call('learn.nextCard', instanceId);
       expect(card).to.not.be.undefined;
     })
 
@@ -84,31 +98,38 @@ describe('Learning flashcards', function() {
         rating: 'easy'
       };
       instance.addReviews(review);
-      await Flashcards.update({_id: card.master}, {$push: {
-        reviews: review
-      }});
+      await Collections.update({'flashcards._id': card.master}, {
+        $push: {
+          'flashcards.$.reviews': review
+        }
+      });
   
       expect(instance.summary().learning).equals(19);
     });
 
-    it('Should retrieve last "easy" review', function() {
-      const card = Flashcards.find({_id: cards[1].master}).fetch()[0];
-      expect(card.reviews[1].rating).to.equals('easy');
+    it('Should retrieve last "easy" review', async function() {
+      let doc = Collections.findOne({
+        'flashcards._id': cards[1].master
+      }, {
+        fields: {
+          flashcards: {
+            $elemMatch: { _id: cards[1].master }
+          }
+        }
+      });
+
+      expect(doc.flashcards[0].reviews[1].rating).to.equals('easy');
     });
   });
 
   describe('Adding reviews by methods', function() {
     after(function() {
-      Flashcards.update({}, {$set: {reviews: []}});
+      resetDatabase();
     });
 
-    let cards = [];
-
-    const instance = instanceManager.get(instanceId);
-
     it('Should add "again" review to collection and dolphin instance', async function () {
-      const card = Meteor.call('learning.nextCard', instanceId);
-      cards.push(card);
+      const card = Meteor.call('learn.nextCard', instanceId);
+
       const review = {
         ts: new Date(),
         master: card.master,
@@ -116,10 +137,20 @@ describe('Learning flashcards', function() {
         rating: 'again'
       };
 
-      Meteor.call('learning.addReview', instanceId, card.master, review);
-      const docs = await Flashcards.find({_id: card.master}).fetch()
-      expect(docs[0].reviews).to.have.length(1);
-      expect(docs[0].reviews[0].rating).equals('again');
+      Meteor.call('learn.addReview', instanceId, card.master, review);
+
+      let doc = Collections.findOne({
+        'flashcards._id': card.master
+      }, {
+        fields: {
+          flashcards: {
+            $elemMatch: { _id: card.master }
+          }
+        }
+      });
+
+      expect(doc.flashcards[0].reviews).to.have.length(1);
+      expect(doc.flashcards[0].reviews[0].rating).equals('again');
     });
   });
 });
