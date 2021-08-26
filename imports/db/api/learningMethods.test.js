@@ -139,18 +139,15 @@ describe('Learning flashcards', function() {
 
       Meteor.call('learn.addReview', instanceId, card.master, review);
 
-      let doc = Collections.findOne({
-        'flashcards._id': card.master
-      }, {
+      let doc = Collections.findOne({ 'flashcards._id': card.master }, {
         fields: {
           flashcards: {
             $elemMatch: { _id: card.master }
           }
         }
       });
-
       expect(doc.flashcards[0].reviews).to.have.length(1);
       expect(doc.flashcards[0].reviews[0].rating).equals('again');
     });
-  });
+  }); 
 });

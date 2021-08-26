@@ -8,10 +8,10 @@ Meteor.methods({
     instance.addMasters(...masters);
     return id;
   },
-  'learn.addReview'(instanceId, id, review) {
+  async 'learn.addReview'(instanceId, id, review) {
     const instance = instanceManager.get(instanceId);
     instance.addReviews(review);
-    Collections.rawCollection().updateMany({}, {
+    await Collections.rawCollection().updateMany({}, {
       $push: {
         'flashcards.$[element].reviews': review
       }
