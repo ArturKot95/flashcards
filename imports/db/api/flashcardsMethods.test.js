@@ -16,7 +16,7 @@ describe('Flashcards', function() {
 
   after(function () {
     resetDatabase();
-  });
+  }); 
 
   it('Should create new flashcard', async function() {
     Meteor.call('flashcard.add', collectionId, 'Good morning', 'Dzień dobry');

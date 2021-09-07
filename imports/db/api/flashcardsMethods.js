@@ -24,12 +24,12 @@ Meteor.methods({
       multi: true
     });
   },
-  'flashcard.edit'(_id, { front, back }) {
+  async 'flashcard.edit'(_id, { front, back }) {
     let change = {};
     if (front) change['flashcards.$[element].front'] = front;
     if (back) change['flashcards.$[element].back'] = back;
 
-    Collections.rawCollection().updateMany({}, {
+    await Collections.rawCollection().updateMany({}, {
       $set: change
     }, {
       arrayFilters: [
