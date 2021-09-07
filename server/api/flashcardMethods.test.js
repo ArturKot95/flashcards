@@ -1,7 +1,7 @@
 import { expect }  from 'chai';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 import { Collections } from '/imports/db/Collections';
-import './flashcardsMethods';
+import './flashcardMethods';
 
 describe('Flashcards', function() {
   let collectionId;
