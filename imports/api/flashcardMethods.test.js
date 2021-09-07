@@ -1,6 +1,6 @@
 import { expect }  from 'chai';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
-import { Collections } from '/imports/db/Collections';
+import Collections from '/imports/db/Collections';
 import './flashcardMethods';
 
 if (Meteor.isServer) {

@@ -1,5 +1,5 @@
 import { instanceManager, convertToMaster } from '/server/dolphinsr';
-import { Collections } from '/imports/db/Collections';
+import Collections from '/imports/db/Collections';
 
 Meteor.methods({
   'learn.start'(flashcards) {

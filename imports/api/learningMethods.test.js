@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 import '/imports/db/factories';
 import { Factory } from 'meteor/dburles:factory';
-import { Collections } from '/imports/db/Collections';
+import Collections from '/imports/db/Collections';
 import { instanceManager } from '/server/dolphinsr';
 import './learningMethods';
 

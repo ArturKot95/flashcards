@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
-import { Collections } from '/imports/db/Collections';
+import Collections from '/imports/db/Collections';
 
 Meteor.methods({
   'flashcard.add'(collectionId, front, back) {

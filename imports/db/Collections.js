@@ -39,4 +39,5 @@ const schema = new SimpleSchema({
 
 Collections.attachSchema(schema);
 
-export { Collections, schema };
+export { schema };
+export default Collections;
