@@ -25,11 +25,14 @@
     "mainModule": {
       "client": "client/main.jsx",
       "server": "server/main.js"
-    }
+    },
+    "testModule": "tests/main.js"
   },
   "devDependencies": {
     "babel-plugin-module-resolver": "^4.1.0",
     "chai": "^4.3.4",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.6",
     "faker": "^5.5.3"
   }
 }

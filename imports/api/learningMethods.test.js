@@ -7,6 +7,7 @@ import { Collections } from '/imports/db/Collections';
 import { instanceManager } from '/server/dolphinsr';
 import './learningMethods';
 
+if (Meteor.isServer) {
 describe('Learning flashcards', function() {
   let flashcards;
   let instanceId;
@@ -146,3 +147,4 @@ describe('Learning flashcards', function() {
     });
   }); 
 });
+}
