@@ -4,16 +4,20 @@ import { Collections } from '/imports/db/Collections';
 
 Meteor.methods({
   'flashcard.add'(collectionId, front, back) {
+    let id = Random.id();
+
     Collections.update({_id: collectionId}, {
       $push: {
         flashcards: {
-          _id: Random.id(),
+          _id: id,
           front,
           back,
           createdAt: new Date()
         }
       }
     });
+
+    return id;
   },
   'flashcard.remove'(_id) {
     Collections.update({}, {

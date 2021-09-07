@@ -5,5 +5,7 @@ import { App } from '/imports/ui/App';
 import 'semantic-ui-css/semantic.min.css'
 
 Meteor.startup(() => {
+  Meteor.call()
+
   render(<App/>, document.getElementById('react-target'));
 });

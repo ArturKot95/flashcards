@@ -8,8 +8,10 @@ describe('Flashcards', function() {
   let flashcardId;
 
   before(function (done) {
+    resetDatabase();
     Collections.insert({name: 'Test'}, (err, _id) => {
       collectionId = _id;
+      flashcardId = Meteor.call('flashcard.add', collectionId, 'Good morning', 'Dzień dobry');
       done();
     });
   });
@@ -19,12 +21,8 @@ describe('Flashcards', function() {
   }); 
 
   it('Should create new flashcard', async function() {
-    Meteor.call('flashcard.add', collectionId, 'Good morning', 'Dzień dobry');
-    const doc = await Collections.find({name: 'Test'}).fetch()[0];
+    const doc = Collections.find({name: 'Test'}).fetch()[0];
     expect(doc.flashcards).to.have.length(1);
-
-    flashcardId = doc.flashcards[0]._id;
-    expect(flashcardId).to.not.be.null;
   });
 
   it('Should edit flashcard, both front and back', async function() {
