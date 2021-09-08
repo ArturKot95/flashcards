@@ -1,3 +1,16 @@
+#appheader {
+  margin-top: 0.7rem;
+}
+
+.appheader-collectionlinks {
+  display: inline-block;
+  margin-left: 0.7rem;
+}
+
 .collectionlink {
   margin-right: 0.7rem;
+}
+
+.newcollection-modal {
+  float: right;
 }
