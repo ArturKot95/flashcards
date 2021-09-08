@@ -1,12 +1,15 @@
 import React from 'react';
 import AppHeader from './AppHeader.jsx';
-import { shallow } from 'enzyme';
+import { App } from '/imports/ui/App.jsx';
+import { shallow, mount } from 'enzyme';
 import { expect } from 'chai';
 import { Header } from 'semantic-ui-react';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 import { Link } from 'react-router-dom';
 
 describe('AppHeader', function () {
+
+
   before(function () {
     resetDatabase();
     Meteor.call('collection.new', 'Test 1');
@@ -19,7 +22,7 @@ describe('AppHeader', function () {
   });
 
   it('Collections links should be next to banner', function () {
-    const header = shallow(<AppHeader />);
-    expect(header.find(Link)).to.have.length(2);
+    const header = shallow(<App />);
+    expect(header.find('.collectionlink')).to.have.length(2);
   })
 });
