@@ -1,6 +1,9 @@
 import React from 'react';
-import AppHeader from './components/AppHeader';
+import AppHeader from './components/AppHeader.jsx';
+import { BrowserRouter } from 'react-router-dom';
 
 export function App() {
-  return <AppHeader />
+  return <BrowserRouter>
+    <AppHeader />
+  </BrowserRouter>
 }
