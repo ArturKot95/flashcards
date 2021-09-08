@@ -3,7 +3,7 @@ import { Random } from 'meteor/random';
 import Collections from '/imports/db/Collections';
 
 Meteor.methods({
-  'flashcard.add'(collectionId, front, back) {
+  'flashcard.new'(collectionId, front, back) {
     let id = Random.id();
 
     Collections.update({_id: collectionId}, {
