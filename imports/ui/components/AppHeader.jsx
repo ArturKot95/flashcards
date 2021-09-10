@@ -21,7 +21,7 @@ export default function AppHeader() {
           { collections.map(c => <Link key={c._id} className="collectionlink" to={`/collections/${c._id}`}>{c.name}</Link>) }
         </div>
 
-        <Button size="small" className="newcollection-modal" onClick={() => setModalOpen(true)}>New</Button>
+        <Button className="newcollection-modal" onClick={() => setModalOpen(true)}>New</Button>
         
         <NewCollectionModal open={modalOpen} onClose={() => setModalOpen(false)} onOpen={() => setModalOpen(true)} />
 
