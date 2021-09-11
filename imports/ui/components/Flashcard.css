@@ -4,3 +4,24 @@
   right: 5px;
   cursor: pointer;
 }
+
+.flashcard-editform {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.flashcard-front, .flashcard-back {
+  position: relative;
+}
+
+.flashcard-front.header {
+  margin-top: 10px !important;
+  margin-bottom: 30px !important;
+  text-align: center;
+}
+
+.flashcard-back.header {
+  margin-top: 15px !important;
+  margin-bottom: 25px !important;
+  text-align: center;
+}

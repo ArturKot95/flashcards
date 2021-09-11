@@ -5,12 +5,14 @@ import {
   Form,
   Icon,
   Divider,
-  Button
+  Button,
+  Header,
+  Flag
 } from 'semantic-ui-react';
 import './Flashcard.css';
 import useOuterClick from '/imports/hooks/useOuterClick';
 
-export default function Flashcard({data: {front, back, _id}, onSelect}) {
+export default function Flashcard({data: {front, back, _id}, onSelect, editable = true}) {
   let [editMode, setEditMode] = useState(false);
   let [newFront, setNewFront] = useState(front);
   let [newBack, setNewBack] = useState(back);
@@ -38,10 +40,8 @@ export default function Flashcard({data: {front, back, _id}, onSelect}) {
   return <Ref innerRef={editMode ? cardRef : null}>
     <Card>
       <Card.Content>
-        <Icon name="edit" size="large" className="flashcard-edit" onClick={() => setEditMode(true)} />
-
         {editMode ? 
-          <Form onSubmit={(e) => {onEdit(); e.preventDefault();}}>
+          <Form onSubmit={(e) => {onEdit(); e.preventDefault();}} className="flashcard-editform">
             <Ref innerRef={frontInputRef}>
               <Form.Input type="text" label="Front" value={newFront} onChange={(e) => setNewFront(e.target.value)} />
             </Ref>
@@ -53,9 +53,23 @@ export default function Flashcard({data: {front, back, _id}, onSelect}) {
           </Form>
         :
           <>
-            <span>{front}</span>
-            <hr />
-            <span>{back}</span> 
+            <div>
+              <div className="flashcard-front">
+                <div className="flashcard-language front">
+                  <Flag name="uk"/>  
+                </div>
+                <Header className="flashcard-front">{front}</Header>
+              </div>
+
+              <Divider />
+
+              <div className="flashcard-back">
+                <div className="flashcard-language back">
+                  <Flag name="germany"/>  
+                </div>
+                <Header className="flashcard-back">{back}</Header>
+              </div>
+            </div>
           </>
         }
       </Card.Content>

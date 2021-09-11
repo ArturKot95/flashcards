@@ -6,18 +6,20 @@ Meteor.methods({
   'flashcard.new'(collectionId, front, back) {
     let id = Random.id();
 
+    const flashcard = {
+      _id: id,
+      front,
+      back,
+      createdAt: new Date()
+    };
+
     Collections.update({_id: collectionId}, {
       $push: {
-        flashcards: {
-          _id: id,
-          front,
-          back,
-          createdAt: new Date()
-        }
+        flashcards: flashcard
       }
     });
 
-    return id;
+    return flashcard;
   },
   'flashcard.remove'(_id) {
     Collections.update({}, {

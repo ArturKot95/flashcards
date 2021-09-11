@@ -4,6 +4,7 @@ import { render } from 'react-dom';
 import { App } from '/imports/ui/App';
 import 'semantic-ui-css/semantic.min.css'
 import './main.css';
+import './flags.css';
 
 Meteor.startup(() => {
   Meteor.call()

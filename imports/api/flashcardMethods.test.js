@@ -12,7 +12,7 @@ if (Meteor.isServer) {
       resetDatabase();
       Collections.insert({name: 'Test'}, (err, _id) => {
         collectionId = _id;
-        flashcardId = Meteor.call('flashcard.new', collectionId, 'Good morning', 'Dzień dobry');
+        flashcardId = Meteor.call('flashcard.new', collectionId, 'Good morning', 'Dzień dobry')._id;
         done();
       });
     });

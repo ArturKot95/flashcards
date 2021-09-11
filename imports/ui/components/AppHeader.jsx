@@ -22,9 +22,8 @@ export default function AppHeader() {
         </div>
 
         <Button className="newcollection-modal" onClick={() => setModalOpen(true)}>New</Button>
-        
         <NewCollectionModal open={modalOpen} onClose={() => setModalOpen(false)} onOpen={() => setModalOpen(true)} />
-
+        
       </Grid.Column>
     </Grid>
   </Container>
