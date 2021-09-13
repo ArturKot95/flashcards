@@ -7,19 +7,30 @@ import {
   Divider,
   Button,
   Header,
-  Flag
+  Flag,
+  Dropdown,
+  Checkbox
 } from 'semantic-ui-react';
 import './Flashcard.css';
 import useOuterClick from '/imports/hooks/useOuterClick';
+import { $ } from 'meteor/jquery';
 
-export default function Flashcard({data: {front, back, _id}, onSelect, editable = true}) {
+export default function Flashcard({data: {front, back, _id}, onCheckboxChange, selected, editable = true}) {
   let [editMode, setEditMode] = useState(false);
+  let [hover, setHover] = useState(false);
   let [newFront, setNewFront] = useState(front);
   let [newBack, setNewBack] = useState(back);
   let frontInputRef = useRef();
-  let cardRef = useOuterClick(() => {
+  let cardRef = useOuterClick((e) => {
     if (editMode) onEdit();
-  });
+  }, 'mousedown');
+
+  useEffect(() => {
+    $(cardRef.current).hover(
+      () => setHover(true),
+      () => setHover(false)
+    );
+  }, []);
 
   useEffect(() => {
     if (editMode) {
@@ -37,9 +48,29 @@ export default function Flashcard({data: {front, back, _id}, onSelect, editable 
     }
   }
 
-  return <Ref innerRef={editMode ? cardRef : null}>
-    <Card>
+  function removeFlashcard() {
+    Meteor.call('flashcard.remove', _id);
+  }
+
+  function checkboxChangeHandler(input) {
+    onCheckboxChange(_id, input.checked);
+  }
+
+  return <Ref innerRef={cardRef}>
+    <Card className="flashcard">
       <Card.Content>
+        { (hover || selected) && <Checkbox className="flashcard-checkbox" 
+          defaultChecked={selected} onChange={(e, input) => checkboxChangeHandler(input)} /> }
+
+        { hover &&
+          <Dropdown item icon='dropdown' simple className="flashcard-dropdown">
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => setEditMode(true)}>Edit</Dropdown.Item>
+              <Dropdown.Item onClick={removeFlashcard}>Delete</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        }
+
         {editMode ? 
           <Form onSubmit={(e) => {onEdit(); e.preventDefault();}} className="flashcard-editform">
             <Ref innerRef={frontInputRef}>
@@ -56,7 +87,7 @@ export default function Flashcard({data: {front, back, _id}, onSelect, editable 
             <div>
               <div className="flashcard-front">
                 <div className="flashcard-language front">
-                  <Flag name="uk"/>  
+                  <span className="flag-icon flag-icon-pl"></span>
                 </div>
                 <Header className="flashcard-front">{front}</Header>
               </div>
@@ -65,7 +96,7 @@ export default function Flashcard({data: {front, back, _id}, onSelect, editable 
 
               <div className="flashcard-back">
                 <div className="flashcard-language back">
-                  <Flag name="germany"/>  
+                  <span className="flag-icon flag-icon-de"></span>  
                 </div>
                 <Header className="flashcard-back">{back}</Header>
               </div>

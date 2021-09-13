@@ -17,7 +17,7 @@ export default function NewCollectionModal({ open, onClose, onOpen }) {
     onClose={() => onClose()}
     onOpen={() => onOpen()}
     open={open}
-    size="small"
+    size="tiny"
   >
     <Modal.Header>New Collection</Modal.Header>
     <Modal.Content>

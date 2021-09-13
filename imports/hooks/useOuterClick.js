@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 
-export default function useOuterClick(callback) {
+export default function useOuterClick(callback, event = 'click') {
   const callbackRef = useRef(); // initialize mutable ref, which stores callback
   const innerRef = useRef(); // returned to client, who marks "border" element
 
@@ -8,8 +8,8 @@ export default function useOuterClick(callback) {
   useEffect(() => { callbackRef.current = callback; });
   
   useEffect(() => {
-    document.addEventListener("click", handleClick);
-    return () => document.removeEventListener("click", handleClick);
+    document.addEventListener(event, handleClick);
+    return () => document.removeEventListener(event, handleClick);
     function handleClick(e) {
       if (innerRef.current && callbackRef.current && 
         !innerRef.current.contains(e.target)

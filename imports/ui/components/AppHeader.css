@@ -1,5 +1,6 @@
 #appheader {
   margin-top: 0.7rem;
+  margin-bottom: 1.5rem;
 }
 
 .appheader-collectionlinks {
@@ -13,4 +14,14 @@
 
 .newcollection-modal {
   float: right;
+}
+
+.appheader-header {
+  display: inline-block;
+  margin-right: 1rem !important;
+}
+
+.appheader-menu {
+  display: inline-block !important;
+  margin-top: 0 !important;
 }

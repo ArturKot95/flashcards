@@ -25,16 +25,16 @@ export default function CollectionPage({ collectionId }) {
   let [showConfirm, setShowConfirm] = useState(false);
   let [renameCollectionMode, setRenameCollectionMode] = useState(false);
   let [learnMode, setLearnMode] = useState(false);
+  let [selectedFlashcards, setSelectedFlashcards] = useState([]);
   const collection = useTracker(() => Collections.find({ _id: collectionId }).fetch()[0]);
-  let [flashcards, setFlashcards] = useState([...collection.flashcards]);
   let [newCollectionName, setNewCollectionName] = useState(collection.name);
 
   useEffect(() => {
     fetchSummary();
-  }, [flashcards]);
+  }, [collection.flashcards]);
 
   function fetchSummary() {
-    Meteor.call('learn.getSummary', flashcards, function (error, summary) {
+    Meteor.call('learn.getSummary', collection.flashcards, function (error, summary) {
       setSummary(summary);
     });
   }
@@ -44,12 +44,18 @@ export default function CollectionPage({ collectionId }) {
     let back = newFlashcardBack.trim();
 
     if (front && back) {
-      Meteor.call('flashcard.new', collectionId, front, back, function (error, flashcard) {
-        if (!error) {
-          setFlashcards([flashcard, ...flashcards]);
-        }
-      });
+      Meteor.call('flashcard.new', collectionId, front, back);
+      setNewFlashcardFront('');
+      setNewFlashcardBack('');
     }
+  }
+
+  function selectFlashcard(id) {
+    setSelectedFlashcards([id, ...selectedFlashcards]);
+  }
+
+  function deselectFlashcard(id) {
+    setSelectedFlashcards(selectedFlashcards.filter(fId => id !== fId));
   }
 
   function removeCollection() {
@@ -66,18 +72,18 @@ export default function CollectionPage({ collectionId }) {
 
   return <>
     {learnMode ?
-      <LearnPage flashcards={flashcards} />
+      <LearnPage flashcards={collection.flashcards} onFinish={() => setLearnMode(false)} />
     :
       <>
         <Confirm
-        open={showConfirm}
-        closeOnDocumentClick
-        header="Remove Collection"
-        content={`Do you want to remove Collection "${collection.name}"`}
-        size="tiny"
-        confirmButton="Remove"
-        onConfirm={removeCollection}
-        onCancel={() => setShowConfirm(false)}
+          open={showConfirm}
+          closeOnDocumentClick
+          header="Remove Collection"
+          content={`Do you want to remove Collection "${collection.name}"`}
+          size="tiny"
+          confirmButton="Remove"
+          onConfirm={removeCollection}
+          onCancel={() => setShowConfirm(false)}
         />
 
         <Grid columns={2}>
@@ -106,8 +112,8 @@ export default function CollectionPage({ collectionId }) {
                 <Button color="green" onClick={() => setLearnMode(true)}>Learn</Button>
                 <Dropdown text="More" button>
                   <Dropdown.Menu>
-                    <Dropdown.Item text="Rename" onClick={() => setRenameCollectionMode(true)}/>
-                    <Dropdown.Item text="Delete" onClick={() => setShowConfirm(true)}/>
+                    <Dropdown.Item icon="pencil" text="Rename" onClick={() => setRenameCollectionMode(true)}/>
+                    <Dropdown.Item icon="trash" text="Remove" onClick={() => setShowConfirm(true)}/>
                   </Dropdown.Menu>
                 </Dropdown>
               </Button.Group>
@@ -136,9 +142,11 @@ export default function CollectionPage({ collectionId }) {
             </Card>
           </Grid.Column>
 
-          { flashcards.map(f => (
+          { collection.flashcards.map(f => (
             <Grid.Column width={4} key={f._id}>
-              <Flashcard data={f} />
+              <Flashcard data={f}
+                selected={selectedFlashcards.includes(f._id)}
+                onCheckboxChange={(id, checked) => checked ? selectFlashcard(id) : deselectFlashcard(id)} />
             </Grid.Column>
           )) }
         </Grid>

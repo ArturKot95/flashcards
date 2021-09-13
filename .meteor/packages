@@ -26,3 +26,4 @@ dev-error-overlay@0.1.1
 xolvio:cleaner
 dburles:factory
 meteortesting:mocha
+jquery

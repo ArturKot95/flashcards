@@ -5,8 +5,9 @@ import {
   Card,
   Button
 } from 'semantic-ui-react';
+import './LearnPage.css';
 
-export default function LearnPage({ flashcards }) {
+export default function LearnPage({ flashcards, onFinish }) {
   let [instanceId, setInstanceId] = useState();
   let [currentCard, setCurrentCard] = useState(null);
   let [summary, setSummary] = useState(null);
@@ -27,6 +28,9 @@ export default function LearnPage({ flashcards }) {
   function nextCard() {
     Meteor.call('learn.nextCard', instanceId, function (error, card) {
       setCurrentCard(card);
+      Meteor.call('learn.getSummary', flashcards, function ( error, summary ) {
+        setSummary(summary);
+      });
     });
   }
 
@@ -44,24 +48,28 @@ export default function LearnPage({ flashcards }) {
     });
   }
 
-  return <Grid verticalAlign="middle">
-    <Grid.Column>
+  return <Grid>
+    <Grid.Column width={6}>
       { currentCard ? 
         <>
-          <Grid.Row>
-            <Card>  
+          <Grid.Row style={{marginBottom: '2rem'}}>
+            <Button size="tiny" onClick={onFinish}>Finish</Button>
+            <Card fluid className="learnpage-card">  
               <Card.Content>
-                <Card.Header> {currentCard.front} </Card.Header>
+                <Card.Header textAlign="center"> {currentCard.front} </Card.Header>
               </Card.Content>
             </Card>
           </Grid.Row>
           <Grid.Row>
-            <Button.Group>
-              <Button onClick={() => addReview('easy')}>Easy</Button>
-              <Button onClick={() => addReview('good')}>Good</Button>
-              <Button onClick={() => addReview('hard')}>Hard</Button>
-              <Button onClick={() => addReview('again')}>Again</Button>
-            </Button.Group>
+            <Grid.Column>
+              <Button.Group>
+                <Button color="green" onClick={() => addReview('easy')}>Easy</Button>
+                <Button color="olive" onClick={() => addReview('good')}>Good</Button>
+                <Button color="orange" onClick={() => addReview('hard')}>Hard</Button>
+                <Button color="red" onClick={() => addReview('again')}>Again</Button>
+              </Button.Group>
+            </Grid.Column>
+            
           </Grid.Row>
         </>
       :
