@@ -47,3 +47,12 @@
   left: 10px;
   z-index: 10;
 }
+
+.flashcard {
+  box-sizing: border-box !important;
+  border: solid 2px transparent !important;
+}
+
+.flashcard.selected {
+  border-color: #21ba45 !important;
+}

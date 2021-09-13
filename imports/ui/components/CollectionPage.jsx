@@ -13,7 +13,9 @@ import {
   Card,
   Divider,
   Icon,
-  Input
+  Input,
+  Segment,
+  Menu
 } from 'semantic-ui-react';
 import Flashcard from './Flashcard.jsx';
 import LearnPage from './LearnPage.jsx';
@@ -26,12 +28,19 @@ export default function CollectionPage({ collectionId }) {
   let [renameCollectionMode, setRenameCollectionMode] = useState(false);
   let [learnMode, setLearnMode] = useState(false);
   let [selectedFlashcards, setSelectedFlashcards] = useState([]);
-  const collection = useTracker(() => Collections.find({ _id: collectionId }).fetch()[0]);
+
+  const collection = useTracker(() => Collections.find(
+    { _id: collectionId }, {sort: { 'flashcards.createdAt': 1 } }
+  ).fetch()[0]);
+  const collectionNames = useTracker(() => Collections.find({}, { fields: { _id: 1, name: 1 } }).fetch());
+
   let [newCollectionName, setNewCollectionName] = useState(collection.name);
 
   useEffect(() => {
+    console.log(collectionNames)
     fetchSummary();
-  }, [collection.flashcards]);
+    collection.flashcards = [];
+  }, [collection.flashcards.length]);
 
   function fetchSummary() {
     Meteor.call('learn.getSummary', collection.flashcards, function (error, summary) {
@@ -65,8 +74,17 @@ export default function CollectionPage({ collectionId }) {
 
   function renameCollection() {
     if (newCollectionName.trim()) {
-      Meteor.call('collection.rename', collectionId, newCollectionName);
-      setRenameCollectionMode(false);
+      Meteor.call('collection.rename', collectionId, newCollectionName, function (error) {
+        setRenameCollectionMode(false);
+      });
+    }
+  }
+
+  function moveFlashcardsToCollection(newCollectionId) {
+    if (selectedFlashcards.length) {
+      selectedFlashcards.forEach(flashcardId => {
+        Meteor.call('flashcard.moveToCollection', flashcardId, newCollectionId);
+      });
     }
   }
 
@@ -86,38 +104,61 @@ export default function CollectionPage({ collectionId }) {
           onCancel={() => setShowConfirm(false)}
         />
 
-        <Grid columns={2}>
-          <Grid.Column>
-            { renameCollectionMode ?
-              <Input autoFocus fluid type="text" value={newCollectionName} action="Rename"
-                onChange={(e) => setNewCollectionName(e.target.value)} onBlur={renameCollection} />
-            :
-              <Header size="huge">
-                {collection.name}
-              </Header>
-            }
-          </Grid.Column>
-          <Grid.Column>
-            <div style={{float: 'right'}}>
-              { summary &&
-                <div className="collectionsummary">
-                  <span>Due: {summary.due}</span>
-                  <span>Later: {summary.later}</span>
-                  <span>Learning: {summary.learning}</span>
-                  <span>Overdue: {summary.overdue}</span>
-                </div>
+        <Segment className="collectionpage-segment">
+          <Grid columns={2}>
+            <Grid.Column>
+              { renameCollectionMode ?
+                <Input autoFocus fluid type="text" value={newCollectionName} action="Rename"
+                  onChange={(e) => setNewCollectionName(e.target.value)} onBlur={renameCollection} />
+              :
+                <Header size="huge" className="collectionpage-header">
+                  {collection.name}
+                </Header>
               }
-              
-              <Button.Group>
-                <Button color="green" onClick={() => setLearnMode(true)}>Learn</Button>
-                <Dropdown text="More" button>
-                  <Dropdown.Menu>
-                    <Dropdown.Item icon="pencil" text="Rename" onClick={() => setRenameCollectionMode(true)}/>
-                    <Dropdown.Item icon="trash" text="Remove" onClick={() => setShowConfirm(true)}/>
-                  </Dropdown.Menu>
-                </Dropdown>
-              </Button.Group>
-            </div>
+            </Grid.Column>
+            <Grid.Column>
+              <div style={{float: 'right'}}>
+                { summary &&
+                  <div className="collectionsummary">
+                    <span>Due: {summary.due}</span>
+                    <span>Later: {summary.later}</span>
+                    <span>Learning: {summary.learning}</span>
+                    <span>Overdue: {summary.overdue}</span>
+                  </div>
+                }
+                
+                <Button.Group>
+                  <Button color="green" onClick={() => setLearnMode(true)}
+                          disabled={summary && (summary.due + summary.learning + summary.overdue === 0)}>Learn</Button>
+                  <Dropdown floating className="button icon" trigger={<></>}>
+                    <Dropdown.Menu>
+                      <Dropdown.Item icon="pencil" text="Rename" onClick={() => setRenameCollectionMode(true)}/>
+                      <Dropdown.Item icon="trash" text="Remove" onClick={() => setShowConfirm(true)}/>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Button.Group>
+              </div>
+            </Grid.Column>
+          </Grid>
+        </Segment>
+
+        <Grid style={{marginTop: '1rem'}}>
+          <Grid.Column>
+            <Button.Group>
+              <Button compact color="green" disabled={selectedFlashcards.length === 0}>Learn Selected</Button>
+              <Dropdown floating compact text='Move to' button disabled={selectedFlashcards.length === 0}>
+                <Dropdown.Menu>
+                  { collectionNames.filter(c => c._id !== collectionId).map(c => (
+                    <Dropdown.Item key={c._id} onClick={() => moveFlashcardsToCollection(c._id)}>
+                      <Icon name="list alternate" />
+                      { c.name }
+                    </Dropdown.Item>
+                  ))}
+                  
+                </Dropdown.Menu>
+              </Dropdown>
+              <Button compact color="red" disabled={selectedFlashcards.length === 0}>Remove</Button>
+            </Button.Group>
           </Grid.Column>
         </Grid>
 

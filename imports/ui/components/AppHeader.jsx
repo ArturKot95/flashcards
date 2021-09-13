@@ -22,7 +22,7 @@ export default function AppHeader() {
   }, []);
 
   return <Container id="appheader">
-    <Menu>
+    <Menu secondary>
       <Menu.Item header>Flashcards</Menu.Item>
       { collections.map(c => (
         <Menu.Item 

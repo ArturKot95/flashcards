@@ -1,4 +1,41 @@
 .learnpage-card {
   padding: 2rem !important;
   cursor: pointer;
+  width: 100% !important;
+}
+
+.learnpage-space {
+  position: absolute;
+  bottom: 2px;
+  right: 7px;
+  font-size: 10px;
+  display: inline-block;
+  color: black;
+}
+
+.learnpage-reviewshortcut {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+}
+
+.learnpage-reviewbuttons button {
+  position: relative !important;
+}
+
+.learnpage-card {
+  margin-top: 1rem;
+  padding: 20px;
+  border: solid 1px black;
+  background-color: white;
+  display: inline-block !important
+}
+
+.learnpage-reveal {
+  margin-top: 2rem;
+  padding: 20px;
+}
+
+.learnpage-reveal .visible, .learnpage-reveal .hidden {
+  width: 100%;
 }

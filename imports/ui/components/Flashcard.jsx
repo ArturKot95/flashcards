@@ -57,7 +57,7 @@ export default function Flashcard({data: {front, back, _id}, onCheckboxChange, s
   }
 
   return <Ref innerRef={cardRef}>
-    <Card className="flashcard">
+    <Card className={`flashcard ${selected ? 'selected' : ''}`}>
       <Card.Content>
         { (hover || selected) && <Checkbox className="flashcard-checkbox" 
           defaultChecked={selected} onChange={(e, input) => checkboxChangeHandler(input)} /> }
@@ -87,7 +87,7 @@ export default function Flashcard({data: {front, back, _id}, onCheckboxChange, s
             <div>
               <div className="flashcard-front">
                 <div className="flashcard-language front">
-                  <span className="flag-icon flag-icon-pl"></span>
+                  {/* <span className="flag-icon flag-icon-pl"></span> */}
                 </div>
                 <Header className="flashcard-front">{front}</Header>
               </div>
@@ -96,7 +96,7 @@ export default function Flashcard({data: {front, back, _id}, onCheckboxChange, s
 
               <div className="flashcard-back">
                 <div className="flashcard-language back">
-                  <span className="flag-icon flag-icon-de"></span>  
+                  {/* <span className="flag-icon flag-icon-de"></span>   */}
                 </div>
                 <Header className="flashcard-back">{back}</Header>
               </div>
