@@ -16,3 +16,7 @@
 .collectionpage-segment {
   position: sticky;
 }
+
+.collectionpage-newcard {
+  border: solid 2px transparent !important;
+}

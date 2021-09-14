@@ -9,17 +9,18 @@ import {
   Header,
   Flag,
   Dropdown,
-  Checkbox
+  Checkbox,
+  Label
 } from 'semantic-ui-react';
 import './Flashcard.css';
 import useOuterClick from '/imports/hooks/useOuterClick';
 import { $ } from 'meteor/jquery';
 
-export default function Flashcard({data: {front, back, _id}, onCheckboxChange, selected, editable = true}) {
+export default function Flashcard({flashcard, onCheckboxChange, selected, editable = true}) {
   let [editMode, setEditMode] = useState(false);
   let [hover, setHover] = useState(false);
-  let [newFront, setNewFront] = useState(front);
-  let [newBack, setNewBack] = useState(back);
+  let [newFront, setNewFront] = useState(flashcard.front);
+  let [newBack, setNewBack] = useState(flashcard.back);
   let frontInputRef = useRef();
   let cardRef = useOuterClick((e) => {
     if (editMode) onEdit();
@@ -43,17 +44,17 @@ export default function Flashcard({data: {front, back, _id}, onCheckboxChange, s
     let backText = newBack.trim();
 
     if (frontText && backText) {
-      Meteor.call('flashcard.edit', _id, { front: frontText, back: backText });
+      Meteor.call('flashcard.edit', flashcard._id, { front: frontText, back: backText });
       setEditMode(false);
     }
   }
 
   function removeFlashcard() {
-    Meteor.call('flashcard.remove', _id);
+    Meteor.call('flashcard.remove', flashcard._id);
   }
 
   function checkboxChangeHandler(input) {
-    onCheckboxChange(_id, input.checked);
+    onCheckboxChange(flashcard, input.checked);
   }
 
   return <Ref innerRef={cardRef}>
@@ -89,7 +90,7 @@ export default function Flashcard({data: {front, back, _id}, onCheckboxChange, s
                 <div className="flashcard-language front">
                   {/* <span className="flag-icon flag-icon-pl"></span> */}
                 </div>
-                <Header className="flashcard-front">{front}</Header>
+                <Header className="flashcard-front">{flashcard.front}</Header>
               </div>
 
               <Divider />
@@ -98,7 +99,7 @@ export default function Flashcard({data: {front, back, _id}, onCheckboxChange, s
                 <div className="flashcard-language back">
                   {/* <span className="flag-icon flag-icon-de"></span>   */}
                 </div>
-                <Header className="flashcard-back">{back}</Header>
+                <Header className="flashcard-back">{flashcard.back}</Header>
               </div>
             </div>
           </>

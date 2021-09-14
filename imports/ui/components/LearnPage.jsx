@@ -18,7 +18,8 @@ export default function LearnPage({ flashcards, onFinish }) {
   let [summary, setSummary] = useState(null);
 
   function revealCard() {
-    if (currentCardRef && !revealed) {
+    if (currentCardRef.current && !revealed) {
+      console.log(currentCardRef.current);
       setCardText(currentCardRef.current.back);
       setRevealed(true);
     }
@@ -69,9 +70,12 @@ export default function LearnPage({ flashcards, onFinish }) {
     setRevealed(false);
 
     Meteor.call('learn.nextCard', instanceId, function (error, card) {
-      setCurrentCard(card);
-      currentCardRef.current = card;
-      setCardText(card.front);
+        setCurrentCard(card);
+        currentCardRef.current = card;
+
+        if (card) {
+          setCardText(card.front);
+        }
       Meteor.call('learn.getSummary', flashcards, function (error, summary) {
         setSummary(summary);
       });

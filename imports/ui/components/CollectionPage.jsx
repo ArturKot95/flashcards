@@ -28,6 +28,7 @@ export default function CollectionPage({ collectionId }) {
   let [renameCollectionMode, setRenameCollectionMode] = useState(false);
   let [learnMode, setLearnMode] = useState(false);
   let [selectedFlashcards, setSelectedFlashcards] = useState([]);
+  let [flashcardsToLearn, setFlashcardsToLearn] = useState([]);
 
   const collection = useTracker(() => Collections.find(
     { _id: collectionId }, {sort: { 'flashcards.createdAt': 1 } }
@@ -37,9 +38,7 @@ export default function CollectionPage({ collectionId }) {
   let [newCollectionName, setNewCollectionName] = useState(collection.name);
 
   useEffect(() => {
-    console.log(collectionNames)
     fetchSummary();
-    collection.flashcards = [];
   }, [collection.flashcards.length]);
 
   function fetchSummary() {
@@ -59,17 +58,25 @@ export default function CollectionPage({ collectionId }) {
     }
   }
 
-  function selectFlashcard(id) {
-    setSelectedFlashcards([id, ...selectedFlashcards]);
+  function selectFlashcard(f) {
+    setSelectedFlashcards([f, ...selectedFlashcards]);
   }
 
-  function deselectFlashcard(id) {
-    setSelectedFlashcards(selectedFlashcards.filter(fId => id !== fId));
+  function deselectFlashcard(f) {
+    setSelectedFlashcards(selectedFlashcards.filter(i => i._id !== f._id));
   }
 
   function removeCollection() {
     Meteor.call('collection.remove', collectionId);
     setShowConfirm(false);
+  }
+
+  function removeFlashcards() {
+    selectedFlashcards.forEach(f => {
+      Meteor.call('flashcard.remove', f._id);
+    });
+
+    setSelectedFlashcards([]);
   }
 
   function renameCollection() {
@@ -81,16 +88,26 @@ export default function CollectionPage({ collectionId }) {
   }
 
   function moveFlashcardsToCollection(newCollectionId) {
-    if (selectedFlashcards.length) {
-      selectedFlashcards.forEach(flashcardId => {
-        Meteor.call('flashcard.moveToCollection', flashcardId, newCollectionId);
-      });
-    }
+    selectedFlashcards.forEach(id => {
+      Meteor.call('flashcard.moveToCollection', id, newCollectionId);
+    });
+
+    setSelectedFlashcards([]);
+  }
+
+  function learnFlashcards(flashcards) {
+    setFlashcardsToLearn(flashcards);
+    setLearnMode(true);
+  }
+
+  function finishLearning() {
+    setFlashcardsToLearn([]);
+    setLearnMode(false);
   }
 
   return <>
     {learnMode ?
-      <LearnPage flashcards={collection.flashcards} onFinish={() => setLearnMode(false)} />
+      <LearnPage flashcards={flashcardsToLearn} onFinish={finishLearning} />
     :
       <>
         <Confirm
@@ -128,7 +145,7 @@ export default function CollectionPage({ collectionId }) {
                 }
                 
                 <Button.Group>
-                  <Button color="green" onClick={() => setLearnMode(true)}
+                  <Button color="green" onClick={() => learnFlashcards(collection.flashcards)}
                           disabled={summary && (summary.due + summary.learning + summary.overdue === 0)}>Learn</Button>
                   <Dropdown floating className="button icon" trigger={<></>}>
                     <Dropdown.Menu>
@@ -145,7 +162,13 @@ export default function CollectionPage({ collectionId }) {
         <Grid style={{marginTop: '1rem'}}>
           <Grid.Column>
             <Button.Group>
-              <Button compact color="green" disabled={selectedFlashcards.length === 0}>Learn Selected</Button>
+              <Button 
+                compact 
+                onClick={() => learnFlashcards(selectedFlashcards)}
+                color="green" 
+                disabled={selectedFlashcards.length === 0}>
+              Learn Selected
+              </Button>
               <Dropdown floating compact text='Move to' button disabled={selectedFlashcards.length === 0}>
                 <Dropdown.Menu>
                   { collectionNames.filter(c => c._id !== collectionId).map(c => (
@@ -157,14 +180,16 @@ export default function CollectionPage({ collectionId }) {
                   
                 </Dropdown.Menu>
               </Dropdown>
-              <Button compact color="red" disabled={selectedFlashcards.length === 0}>Remove</Button>
+              <Button compact color="red" 
+                disabled={selectedFlashcards.length === 0} 
+                onClick={removeFlashcards}>Remove</Button>
             </Button.Group>
           </Grid.Column>
         </Grid>
 
         <Grid>
           <Grid.Column width={4}>
-            <Card>
+            <Card className="collectionpage-newcard">
               <Card.Content>
                 <Header size="tiny">New Card</Header>
 
@@ -185,9 +210,9 @@ export default function CollectionPage({ collectionId }) {
 
           { collection.flashcards.map(f => (
             <Grid.Column width={4} key={f._id}>
-              <Flashcard data={f}
-                selected={selectedFlashcards.includes(f._id)}
-                onCheckboxChange={(id, checked) => checked ? selectFlashcard(id) : deselectFlashcard(id)} />
+              <Flashcard flashcard={f}
+                selected={!!selectedFlashcards.filter(i => i._id === f._id).length}
+                onCheckboxChange={(f, checked) => checked ? selectFlashcard(f) : deselectFlashcard(f)} />
             </Grid.Column>
           )) }
         </Grid>

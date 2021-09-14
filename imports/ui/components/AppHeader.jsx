@@ -37,9 +37,6 @@ export default function AppHeader() {
       </Menu.Menu>
     </Menu>
     
-
-    
-
     <NewCollectionModal open={modalOpen} onClose={() => setModalOpen(false)} onOpen={() => setModalOpen(true)} />
   </Container>
 }

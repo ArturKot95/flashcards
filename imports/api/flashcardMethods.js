@@ -26,9 +26,7 @@ Meteor.methods({
       $pull: {
         flashcards: { _id }
       }
-    }, {
-      multi: true
-    });
+    }, { multi: true });
   },
   async 'flashcard.edit'(_id, { front, back }) {
     let change = {};
@@ -57,12 +55,12 @@ Meteor.methods({
       $pull: {
         flashcards: { _id }
       }
-    });
+    }, { multi: true });
 
     Collections.update({_id: collectionId}, {
       $push: {
         flashcards: flashcard
       }
-    });
+    }, { multi: true });
   }
 });
