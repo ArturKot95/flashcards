@@ -13,17 +13,18 @@ import {
   Label
 } from 'semantic-ui-react';
 import './Flashcard.css';
+import FlashcardLevel from './FlashcardLevel'
 import useOuterClick from '/imports/hooks/useOuterClick';
 import { $ } from 'meteor/jquery';
 
-export default function Flashcard({flashcard, onCheckboxChange, selected, editable = true}) {
+export default function Flashcard({flashcard, onCheckboxChange, onRemove, onEdit, selected, editable = true}) {
   let [editMode, setEditMode] = useState(false);
   let [hover, setHover] = useState(false);
   let [newFront, setNewFront] = useState(flashcard.front);
   let [newBack, setNewBack] = useState(flashcard.back);
   let frontInputRef = useRef();
   let cardRef = useOuterClick((e) => {
-    if (editMode) onEdit();
+    if (editMode) editFlashcard();
   }, 'mousedown');
 
   useEffect(() => {
@@ -39,18 +40,20 @@ export default function Flashcard({flashcard, onCheckboxChange, selected, editab
     }
   }, [editMode]);
 
-  function onEdit() {
+  function editFlashcard() {
     let frontText = newFront.trim();
     let backText = newBack.trim();
 
     if (frontText && backText) {
       Meteor.call('flashcard.edit', flashcard._id, { front: frontText, back: backText });
       setEditMode(false);
+      onEdit(flashcard._id, { front: frontText, back: backText });
     }
   }
 
   function removeFlashcard() {
     Meteor.call('flashcard.remove', flashcard._id);
+    onRemove(flashcard);
   }
 
   function checkboxChangeHandler(input) {
@@ -61,19 +64,19 @@ export default function Flashcard({flashcard, onCheckboxChange, selected, editab
     <Card className={`flashcard ${selected ? 'selected' : ''}`}>
       <Card.Content>
         { (hover || selected) && <Checkbox className="flashcard-checkbox" 
-          defaultChecked={selected} onChange={(e, input) => checkboxChangeHandler(input)} /> }
+          checked={selected} onChange={(e, input) => checkboxChangeHandler(input)} /> }
 
         { hover &&
           <Dropdown item icon='dropdown' simple className="flashcard-dropdown">
             <Dropdown.Menu>
               <Dropdown.Item onClick={() => setEditMode(true)}>Edit</Dropdown.Item>
-              <Dropdown.Item onClick={removeFlashcard}>Delete</Dropdown.Item>
+              <Dropdown.Item onClick={removeFlashcard}>Remove</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         }
 
         {editMode ? 
-          <Form onSubmit={(e) => {onEdit(); e.preventDefault();}} className="flashcard-editform">
+          <Form onSubmit={(e) => {editFlashcard(); e.preventDefault();}} className="flashcard-editform">
             <Ref innerRef={frontInputRef}>
               <Form.Input type="text" label="Front" value={newFront} onChange={(e) => setNewFront(e.target.value)} />
             </Ref>
@@ -104,6 +107,8 @@ export default function Flashcard({flashcard, onCheckboxChange, selected, editab
             </div>
           </>
         }
+
+        <FlashcardLevel reviews={flashcard.reviews} />
       </Card.Content>
     </Card>
   </Ref>

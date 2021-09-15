@@ -1,7 +1,9 @@
 .learnpage-card {
+  position: relative;
   padding: 2rem !important;
   cursor: pointer;
   width: 100% !important;
+  margin-top: 2rem;
 }
 
 .learnpage-space {
@@ -38,4 +40,12 @@
 
 .learnpage-reveal .visible, .learnpage-reveal .hidden {
   width: 100%;
+}
+
+.learnpage-spacetoreveal {
+  font-family: monospace;
+  font-size: 10px;
+  position: absolute;
+  bottom: 5px;
+  left: 10px;
 }

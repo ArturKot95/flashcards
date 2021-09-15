@@ -96,10 +96,6 @@ export default function LearnPage({ flashcards, onFinish }) {
     });
   }
 
-  function onKeyPress(e) {
-    if (e.key === ' ') revealCard();
-  }
-
   return <Grid centered>
     <Grid.Column width={5}>
       { currentCard ? 
@@ -107,9 +103,10 @@ export default function LearnPage({ flashcards, onFinish }) {
           <Grid.Row style={{marginBottom: '2rem'}}>
             <Button size="tiny" onClick={onFinish}>Finish</Button>
 
-            <Card>
+            <Card fluid className="learnpage-card" onClick={revealCard}>
               <Card.Content>
-                <Card.Header>{ cardText }</Card.Header>
+                <Card.Header textAlign="center">{ cardText }</Card.Header>
+                <span className="learnpage-spacetoreveal">space to reveal</span>
               </Card.Content>
             </Card>
               
