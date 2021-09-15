@@ -17,7 +17,7 @@ import FlashcardLevel from './FlashcardLevel'
 import useOuterClick from '/imports/hooks/useOuterClick';
 import { $ } from 'meteor/jquery';
 
-export default function Flashcard({flashcard, onCheckboxChange, onRemove, onEdit, selected, editable = true}) {
+export default function Flashcard({flashcard, onCheckboxChange, onRemove, onEdit, selected, editable = true, ...otherProps}) {
   let [editMode, setEditMode] = useState(false);
   let [hover, setHover] = useState(false);
   let [newFront, setNewFront] = useState(flashcard.front);
@@ -61,7 +61,7 @@ export default function Flashcard({flashcard, onCheckboxChange, onRemove, onEdit
   }
 
   return <Ref innerRef={cardRef}>
-    <Card className={`flashcard ${selected ? 'selected' : ''}`}>
+    <Card className={`flashcard ${selected ? 'selected' : ''} ${otherProps.className}`}>
       <Card.Content>
         { (hover || selected) && <Checkbox className="flashcard-checkbox" 
           checked={selected} onChange={(e, input) => checkboxChangeHandler(input)} /> }

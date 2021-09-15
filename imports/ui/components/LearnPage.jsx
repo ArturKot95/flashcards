@@ -3,55 +3,60 @@ import {
   Grid,
   Header,
   Card,
-  Button,
-  Reveal,
-  Image
+  Button
 } from 'semantic-ui-react';
 import './LearnPage.css';
+import Summary from './Summary.jsx';
 
 export default function LearnPage({ flashcards, onFinish }) {
   let [instanceId, setInstanceId] = useState();
+  let instanceIdRef = useRef();
   let [currentCard, setCurrentCard] = useState(null);
   let currentCardRef = useRef(null);
   let [revealed, setRevealed] = useState(false);
+  let revealedRef = useRef(false);
   let [cardText, setCardText] = useState('');
   let [summary, setSummary] = useState(null);
 
   function revealCard() {
     if (currentCardRef.current && !revealed) {
-      console.log(currentCardRef.current);
       setCardText(currentCardRef.current.back);
       setRevealed(true);
     }
   }
+
+  useEffect(() => revealedRef.current = revealed, [revealed]);
+  useEffect(() => instanceIdRef.current = instanceId, [instanceId]);
 
   useEffect(() => {
     Meteor.call('learn.start', flashcards, function (error, { id, summary }) {
       setInstanceId(id);
       setSummary(summary);
     });
+
+    document.addEventListener('keypress', keyPressHandler);
   }, []);
 
-  useEffect(() => {
-    if (revealed) {
-      document.addEventListener('keypress', function (e) {
-        switch (e.key) {
-          case '1':
-            addReview('easy');
-            break;
-          case '2':
-            addReview('good');
-            break;
-          case '3':
-            addReview('hard');
-            break;
-          case '4':
-            addReview('again');
-            break;
-        }
-      });
+  function keyPressHandler(e) {
+    if (revealedRef.current) {
+      console.log('currentCard', currentCard);
+      console.log('currentCardRef', currentCardRef);
+      switch (e.key) {
+        case '1':
+          addReview('easy');
+          break;
+        case '2':
+          addReview('good');
+          break;
+        case '3':
+          addReview('hard');
+          break;
+        case '4':
+          addReview('again');
+          break;
+      }
     }
-  }, [revealed]);
+  }
 
   useEffect(() => {
     if (instanceId) {
@@ -69,28 +74,26 @@ export default function LearnPage({ flashcards, onFinish }) {
   function nextCard() {
     setRevealed(false);
 
-    Meteor.call('learn.nextCard', instanceId, function (error, card) {
+    Meteor.call('learn.nextCard', instanceIdRef.current, function (error, card) {
         setCurrentCard(card);
         currentCardRef.current = card;
 
         if (card) {
           setCardText(card.front);
         }
-      Meteor.call('learn.getSummary', flashcards, function (error, summary) {
-        setSummary(summary);
-      });
     });
   }
 
   function addReview(rating) {
+    console.log(currentCardRef.current);
     const review = {
-      master: currentCard.master,
-      combination: currentCard.combination,
+      master: currentCardRef.current.master,
+      combination: currentCardRef.current.combination,
       ts: new Date(),
       rating: rating
     };
 
-    Meteor.call('learn.addReview', instanceId, currentCard.master, review, function (error, summary) {
+    Meteor.call('learn.addReview', instanceIdRef.current, currentCardRef.current.master, review, function (error, summary) {
       setSummary(summary);
       nextCard();
     });
@@ -103,10 +106,16 @@ export default function LearnPage({ flashcards, onFinish }) {
           <Grid.Row style={{marginBottom: '2rem'}}>
             <Button size="tiny" onClick={onFinish}>Finish</Button>
 
+            { summary &&
+              <div style={{textAlign: 'center', marginTop: '1rem'}}>
+                <Summary summary={summary} />
+              </div>
+            }
+
             <Card fluid className="learnpage-card" onClick={revealCard}>
               <Card.Content>
                 <Card.Header textAlign="center">{ cardText }</Card.Header>
-                <span className="learnpage-spacetoreveal">space to reveal</span>
+                {!revealed && <span className="learnpage-spacetoreveal">space to reveal</span>}
               </Card.Content>
             </Card>
               

@@ -11,7 +11,6 @@ import {
   Dropdown,
   Form,
   Card,
-  Divider,
   Icon,
   Input,
   Segment,
@@ -19,9 +18,13 @@ import {
   Menu,
   Ref
 } from 'semantic-ui-react';
+import { createSelectable, SelectableGroup } from 'react-selectable';
+import _ from 'lodash';
+
 import Flashcard from './Flashcard.jsx';
 import LearnPage from './LearnPage.jsx';
-import { createSelectable, SelectableGroup } from 'react-selectable';
+import Summary from './Summary.jsx'
+import usePrevious from '/imports/hooks/usePrevious';
 
 const SelectableFlashcard = createSelectable(Flashcard);
 
@@ -35,16 +38,25 @@ export default function CollectionPage({ collectionId }) {
   let [showConfirm, setShowConfirm] = useState(false);
   let [renameCollectionMode, setRenameCollectionMode] = useState(false);
   let [learnMode, setLearnMode] = useState(false);
+  let [filterMode, setFilterMode] = useState(false);
   let [selectedFlashcards, setSelectedFlashcards] = useState([]);
   let [flashcardsToLearn, setFlashcardsToLearn] = useState([]);
-
   const collection = useTracker(() => Collections.find(
     { _id: collectionId }, {sort: { 'flashcards.createdAt': 1 } }
   ).fetch()[0]);
   const collectionNames = useTracker(() => Collections.find({}, { fields: { _id: 1, name: 1 } }).fetch());
-
   let [displayedFlashcards, setDisplayedFlashcards] = useState(collection.flashcards);
   let [newCollectionName, setNewCollectionName] = useState(collection.name);
+  let previousDisplayedFlashcards = usePrevious(displayedFlashcards);
+
+  useEffect(() => {
+    // sync selected flashcards with displayed ones
+    if (!_.isEqual(previousDisplayedFlashcards, displayedFlashcards)) {
+      setSelectedFlashcards(selectedFlashcards.map(sf => 
+        displayedFlashcards.filter(f => f._id === sf._id)[0]  
+      ))
+    }
+  }, [displayedFlashcards])
 
   useEffect(() => {
     fetchSummary();
@@ -61,16 +73,20 @@ export default function CollectionPage({ collectionId }) {
   function filter() {
     filterText = filterText.trim().toLowerCase();
     if (filterText.length >= 3) {
-      setDisplayedFlashcards([
-        ...displayedFlashcards.filter(f => {
-          return (f.front.toLowerCase().includes(filterText) ||
-                 f.back.toLowerCase().includes(filterText)) &&
-                 selectedFlashcards.filter(sf => sf._id === f._id).length === 0;
-        }),
-        ...selectedFlashcards
-      ]);
+      if (selectedFlashcards.length < displayedFlashcards.length) {
+        setDisplayedFlashcards([
+          ...collection.flashcards.filter(f => {
+            return (f.front.toLowerCase().includes(filterText) ||
+                   f.back.toLowerCase().includes(filterText)) &&
+                   selectedFlashcards.filter(sf => sf._id === f._id).length === 0;
+          }),
+          ...selectedFlashcards
+        ]);
+      }
+      setFilterMode(true);
     } else {
       setDisplayedFlashcards(collection.flashcards);
+      setFilterMode(false);
     }
   }
 
@@ -138,6 +154,7 @@ export default function CollectionPage({ collectionId }) {
   function finishLearning() {
     fetchSummary();
     setFlashcardsToLearn([]);
+    setDisplayedFlashcards(collection.flashcards);
     setLearnMode(false);
   }
 
@@ -145,8 +162,6 @@ export default function CollectionPage({ collectionId }) {
     setDisplayedFlashcards(displayedFlashcards.reduce((prev, current) => {
       return [...prev, current._id === id ? {...current, _id: id, front, back} : current];
     }, []));
-
-    setFilterText('');
   }
 
   function onSelectCheckboxChange(e, value) {
@@ -192,12 +207,7 @@ export default function CollectionPage({ collectionId }) {
             <Grid.Column>
               <div style={{float: 'right'}}>
                 { summary &&
-                  <div className="collectionsummary">
-                    <span>Due: {summary.due}</span>
-                    <span>Later: {summary.later}</span>
-                    <span>Learning: {summary.learning}</span>
-                    <span>Overdue: {summary.overdue}</span>
-                  </div>
+                  <Summary summary={summary} style={{marginRight: '0.5rem'}} />
                 }
                 
                 <Button.Group>
@@ -306,6 +316,7 @@ export default function CollectionPage({ collectionId }) {
               { displayedFlashcards.map(f => (
                 <Grid.Column width={4} key={f._id}>
                     <Flashcard
+                      className={(!!selectedFlashcards.filter(i => i._id === f._id).length && filterMode) ? 'overexposed' : ''}
                       selectableKey={f._id}
                       flashcard={f}
                       onEdit={(id, data) => onEdit(id, data)}

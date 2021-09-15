@@ -1,13 +1,3 @@
-.collectionsummary {
-  margin-right: 0.5rem;
-  display: inline-block;
-}
-
-.collectionsummary span {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
-}
-
 .collectionpage-header {
   position: relative;
   top: 3px;
@@ -19,4 +9,8 @@
 
 .collectionpage-newcard {
   border: solid 2px transparent !important;
+}
+
+.overexposed {
+  opacity: 50% !important
 }
