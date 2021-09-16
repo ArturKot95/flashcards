@@ -10,7 +10,8 @@ import {
   Flag,
   Dropdown,
   Checkbox,
-  Label
+  Label,
+  Segment
 } from 'semantic-ui-react';
 import './Flashcard.css';
 import FlashcardLevel from './FlashcardLevel'
@@ -61,55 +62,59 @@ export default function Flashcard({flashcard, onCheckboxChange, onRemove, onEdit
   }
 
   return <Ref innerRef={cardRef}>
-    <Card className={`flashcard ${selected ? 'selected' : ''} ${otherProps.className}`}>
-      <Card.Content>
-        { (hover || selected) && <Checkbox className="flashcard-checkbox" 
-          checked={selected} onChange={(e, input) => checkboxChangeHandler(input)} /> }
+      <Card className={`flashcard ${selected ? 'selected' : ''} ${otherProps.className}`}>
+        <Card.Content>
+          { (hover || selected) && <Checkbox className="flashcard-checkbox" 
+            checked={selected} onChange={(e, input) => checkboxChangeHandler(input)} /> }
 
-        { hover &&
-          <Dropdown item icon='dropdown' simple className="flashcard-dropdown">
-            <Dropdown.Menu>
-              <Dropdown.Item onClick={() => setEditMode(true)}>Edit</Dropdown.Item>
-              <Dropdown.Item onClick={removeFlashcard}>Remove</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        }
+          { hover &&
+            <Dropdown item icon='dropdown' simple className="flashcard-dropdown">
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={() => setEditMode(true)}>Edit</Dropdown.Item>
+                <Dropdown.Item onClick={removeFlashcard}>Remove</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          }
 
-        {editMode ? 
-          <Form onSubmit={(e) => {editFlashcard(); e.preventDefault();}} className="flashcard-editform">
-            <Ref innerRef={frontInputRef}>
-              <Form.Input type="text" label="Front" value={newFront} onChange={(e) => setNewFront(e.target.value)} />
-            </Ref>
-
-            <Divider />
-            <Form.Input type="text" label="Back" value={newBack} onChange={(e) => setNewBack(e.target.value)} />
-            
-            <Button type="submit" style={{display: 'none'}}>edit</Button>
-          </Form>
-        :
-          <>
-            <div>
-              <div className="flashcard-front">
-                <div className="flashcard-language front">
-                  {/* <span className="flag-icon flag-icon-pl"></span> */}
-                </div>
-                <Header className="flashcard-front">{flashcard.front}</Header>
-              </div>
+          {editMode ? 
+            <Form onSubmit={(e) => {editFlashcard(); e.preventDefault();}} className="flashcard-editform">
+              <Ref innerRef={frontInputRef}>
+                <Form.Input type="text" label="Front" value={newFront} onChange={(e) => setNewFront(e.target.value)} />
+              </Ref>
 
               <Divider />
-
-              <div className="flashcard-back">
-                <div className="flashcard-language back">
-                  {/* <span className="flag-icon flag-icon-de"></span>   */}
+              <Form.Input type="text" label="Back" value={newBack} onChange={(e) => setNewBack(e.target.value)} />
+              
+              <Button type="submit" style={{display: 'none'}}>edit</Button>
+            </Form>
+          :
+            <>
+              <div>
+                <div className="flashcard-front">
+                  <div className="flashcard-language front">
+                    {/* <span className="flag-icon flag-icon-pl"></span> */}
+                  </div>
+                  <Header className="flashcard-front">{flashcard.front}</Header>
                 </div>
-                <Header className="flashcard-back">{flashcard.back}</Header>
-              </div>
-            </div>
-          </>
-        }
 
-        <FlashcardLevel reviews={flashcard.reviews} />
-      </Card.Content>
-    </Card>
+                <Divider />
+
+                <div className="flashcard-back">
+                  <div className="flashcard-language back">
+                    {/* <span className="flag-icon flag-icon-de"></span>   */}
+                  </div>
+                  <Header className="flashcard-back">{flashcard.back}</Header>
+                </div>
+              </div>
+            </>
+          }
+
+          <Label.Group size="mini" className="flashcard-tags">
+            <Label >animals</Label>
+            <Label>A1</Label>
+          </Label.Group>
+          <FlashcardLevel reviews={flashcard.reviews} />
+        </Card.Content>
+      </Card>
   </Ref>
 }
