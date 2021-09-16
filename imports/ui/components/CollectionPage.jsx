@@ -47,6 +47,7 @@ export default function CollectionPage({ collectionId }) {
   const collectionNames = useTracker(() => Collections.find({}, { fields: { _id: 1, name: 1 } }).fetch());
   let [displayedFlashcards, setDisplayedFlashcards] = useState(collection.flashcards);
   let [newCollectionName, setNewCollectionName] = useState(collection.name);
+  let previousFlashcards = usePrevious(collection.flashcards);
   let previousDisplayedFlashcards = usePrevious(displayedFlashcards);
 
   useEffect(() => {
@@ -57,6 +58,12 @@ export default function CollectionPage({ collectionId }) {
       ))
     }
   }, [displayedFlashcards])
+
+  useEffect(() => {
+    if (!_.isEqual(previousFlashcards, collection.flashcards)) {
+      setDisplayedFlashcards(collection.flashcards);
+    }
+  }, [collection.flashcards]);
 
   useEffect(() => {
     fetchSummary();
@@ -158,11 +165,11 @@ export default function CollectionPage({ collectionId }) {
     setLearnMode(false);
   }
 
-  function onEdit(id, { front, back }) {
-    setDisplayedFlashcards(displayedFlashcards.reduce((prev, current) => {
-      return [...prev, current._id === id ? {...current, _id: id, front, back} : current];
-    }, []));
-  }
+  // function onEdit(id, { front, back }) {
+  //   setDisplayedFlashcards(displayedFlashcards.reduce((prev, current) => {
+  //     return [...prev, current._id === id ? {...current, _id: id, front, back} : current];
+  //   }, []));
+  // }
 
   function onSelectCheckboxChange(e, value) {
     if (value.checked) {
