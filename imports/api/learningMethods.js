@@ -12,7 +12,7 @@ Meteor.methods({
     instance.addReviews(...reviews);
 
     return { id, summary: instance.summary() };
-  },
+  }, 
 
   'learn.getSummary'(flashcards) {
     let instance = new DolphinSR();

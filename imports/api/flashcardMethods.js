@@ -62,5 +62,31 @@ Meteor.methods({
         flashcards: flashcard
       }
     }, { multi: true });
+  },
+  async 'flashcard.addTag'(id, tag) {
+    await Collections.rawCollection().updateMany({}, {
+      $push: {
+        'flashcards.$[element].tags': tag
+      }
+    }, {
+      arrayFilters: [
+        {
+          'element._id': id
+        }
+      ]
+    })
+  },
+  async 'flashcard.removeTag'(id, tag) {
+    await Collections.rawCollection().updateMany({}, {
+      $pull: {
+        'flashcards.$[element].tags': tag
+      }
+    }, {
+      arrayFilters: [
+        {
+          'element._id': id
+        }
+      ]
+    })
   }
 });

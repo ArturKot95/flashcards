@@ -53,6 +53,19 @@ if (Meteor.isServer) {
         done();
       });
     });
+
+    it('Should add tag "german" to flashcards', async function() {
+      Meteor.call('flashcard.addTag', flashcardId, 'german');
+      const doc = await Collections.find({ _id: collectionId }).fetch()[0];
+      console.log(doc);
+      expect(doc.flashcards[0].tags[0]).to.equal('german');
+    });
+
+    it('Should remove tag "german" from flashcard', async function() {
+      Meteor.call('flashcard.removeTag', flashcardId, 'german');
+      const doc = await Collections.find({ _id: collectionId }).fetch()[0];
+      expect(doc.flashcards[0].tags).to.have.length(0);
+    });
   
     it('Should remove flashcard', async function() {
       Meteor.call('flashcard.remove', flashcardId);

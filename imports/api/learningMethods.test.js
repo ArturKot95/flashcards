@@ -41,7 +41,7 @@ describe('Learning flashcards', function() {
   });
 
   it('Should create dolphin instance from "learn.start" method', function () {
-    instanceId = Meteor.call('learn.start', flashcards);
+    instanceId = Meteor.call('learn.start', flashcards).id;
     const instance = instanceManager.get(instanceId);
     expect(instance).to.not.be.undefined;
     expect(instanceId).to.not.be.undefined;
