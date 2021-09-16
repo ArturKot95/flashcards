@@ -241,7 +241,7 @@ export default function CollectionPage({ collectionId }) {
         <Grid style={{marginTop: '1rem'}}>
           <Grid.Column width={8}>
             <Button.Group size="small">
-              <Button onClick={() => selectCheckboxRef.current.querySelector('input[type="checkbox"]').click()}>
+              <Button compact onClick={() => selectCheckboxRef.current.querySelector('input[type="checkbox"]').click()}>
                 <Ref innerRef={selectCheckboxRef}>
                   <Checkbox
                   onChange={(e, value) => onSelectCheckboxChange(e, value)}
@@ -251,13 +251,14 @@ export default function CollectionPage({ collectionId }) {
               </Button>
               { !!selectedFlashcards.length &&
                 <>
-                  <Button 
+                  <Button
+                    compact
                     color="green"
                     onClick={() => learnFlashcards(selectedFlashcards)}
                     >
                     Learn Selected
                   </Button>
-                  <Dropdown floating text='Move to' button>
+                  <Dropdown compact floating text='Move' button>
                     <Dropdown.Menu>
                       { collectionNames.filter(c => c._id !== collectionId).map(c => (
                         <Dropdown.Item key={c._id} onClick={() => moveFlashcardsToCollection(c._id)}>
@@ -265,10 +266,20 @@ export default function CollectionPage({ collectionId }) {
                           { c.name }
                         </Dropdown.Item>
                       ))}
-                      
+                    </Dropdown.Menu>
+                  </Dropdown>
+                  <Dropdown compact floating text='Tag' button>
+                    <Dropdown.Menu>
+                      { collectionNames.filter(c => c._id !== collectionId).map(c => (
+                        <Dropdown.Item key={c._id} onClick={() => moveFlashcardsToCollection(c._id)}>
+                          <Icon name="list alternate" />
+                          { c.name }
+                        </Dropdown.Item>
+                      ))}
                     </Dropdown.Menu>
                   </Dropdown>
                   <Button 
+                    compact
                     disabled={selectedFlashcards.length === 0} 
                     onClick={removeFlashcards}
                   >Remove</Button>
