@@ -24,6 +24,7 @@ import _ from 'lodash';
 import Flashcard from './Flashcard.jsx';
 import LearnPage from './LearnPage.jsx';
 import Summary from './Summary.jsx'
+import TagDropdown from './TagDropdown.jsx';
 import usePrevious from '/imports/hooks/usePrevious';
 
 const SelectableFlashcard = createSelectable(Flashcard);
@@ -49,6 +50,7 @@ export default function CollectionPage({ collectionId }) {
   let [newCollectionName, setNewCollectionName] = useState(collection.name);
   let previousFlashcards = usePrevious(collection.flashcards);
   let previousDisplayedFlashcards = usePrevious(displayedFlashcards);
+  let [tags, setTags] = useState([]);
 
   useEffect(() => {
     // sync selected flashcards with displayed ones
@@ -62,6 +64,10 @@ export default function CollectionPage({ collectionId }) {
   useEffect(() => {
     if (!_.isEqual(previousFlashcards, collection.flashcards)) {
       setDisplayedFlashcards(collection.flashcards);
+
+      let tags = new Set();
+      collection.flashcards.forEach(f => f.tags && tags.add(...f.tags));
+      setTags(Array.from(tags));
     }
   }, [collection.flashcards]);
 
@@ -258,7 +264,7 @@ export default function CollectionPage({ collectionId }) {
                     >
                     Learn Selected
                   </Button>
-                  <Dropdown compact floating text='Move' button>
+                  <Dropdown compact text='Move' button>
                     <Dropdown.Menu>
                       { collectionNames.filter(c => c._id !== collectionId).map(c => (
                         <Dropdown.Item key={c._id} onClick={() => moveFlashcardsToCollection(c._id)}>
@@ -268,16 +274,7 @@ export default function CollectionPage({ collectionId }) {
                       ))}
                     </Dropdown.Menu>
                   </Dropdown>
-                  <Dropdown compact floating text='Tag' button>
-                    <Dropdown.Menu>
-                      { collectionNames.filter(c => c._id !== collectionId).map(c => (
-                        <Dropdown.Item key={c._id} onClick={() => moveFlashcardsToCollection(c._id)}>
-                          <Icon name="list alternate" />
-                          { c.name }
-                        </Dropdown.Item>
-                      ))}
-                    </Dropdown.Menu>
-                  </Dropdown>
+                  <TagDropdown flashcards={selectedFlashcards} callback={() => setSelectedFlashcards([])} />
                   <Button 
                     compact
                     disabled={selectedFlashcards.length === 0} 

@@ -18,7 +18,6 @@ Meteor.methods({
         flashcards: flashcard
       }
     });
-
     return flashcard;
   },
   'flashcard.remove'(_id) {
@@ -51,6 +50,7 @@ Meteor.methods({
     });
 
     let flashcard = doc.flashcards[0];
+
     Collections.update({}, {
       $pull: {
         flashcards: { _id }
@@ -63,28 +63,42 @@ Meteor.methods({
       }
     }, { multi: true });
   },
-  async 'flashcard.addTag'(id, tag) {
+  async 'flashcard.addTag'(_id, tag) {
+    const doc = Collections.findOne({ 'flashcards._id': _id }, {
+      fields: { flashcards: {
+        $elemMatch: { _id }
+      }}
+    });
+
+    let tags = new Set(doc.flashcards[0].tags);
+    tags.add(tag.toLowerCase());
+
     await Collections.rawCollection().updateMany({}, {
-      $push: {
-        'flashcards.$[element].tags': tag
-      }
+      $set: { 'flashcards.$[element].tags': Array.from(tags) }
     }, {
       arrayFilters: [
         {
-          'element._id': id
+          "element._id": _id
         }
       ]
     })
   },
-  async 'flashcard.removeTag'(id, tag) {
+  async 'flashcard.removeTag'(_id, tag) {
+    const doc = Collections.findOne({ 'flashcards._id': _id }, {
+      fields: { flashcards: {
+        $elemMatch: { _id }
+      }}
+    });
+
+    let tags = new Set(doc.flashcards[0].tags);
+    tags.delete(tag);
+    
     await Collections.rawCollection().updateMany({}, {
-      $pull: {
-        'flashcards.$[element].tags': tag
-      }
+      $set: { 'flashcards.$[element].tags': Array.from(tags) }
     }, {
       arrayFilters: [
         {
-          'element._id': id
+          "element._id": _id
         }
       ]
     })

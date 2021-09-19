@@ -12,11 +12,6 @@ const schema = new SimpleSchema({
       if (this.isInsert) return new Date();
     }
   },
-  tags: {
-    type: Array,
-    defaultValue: []
-  },
-  'tags.$': String,
   flashcards: {
     type: Array,
     defaultValue: []
@@ -26,6 +21,13 @@ const schema = new SimpleSchema({
     front: String,
     back: String,
     createdAt: Date,
+    tags: {
+      type: Array,
+      defaultValue: []
+    },
+    'tags.$': {
+      type: String
+    },
     reviews: {
       type: Array,
       defaultValue: []

@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import '/imports/api/flashcardMethods';
+import '/imports/api/tagMethods';
 import '/imports/api/collectionMethods';
 import '/imports/api/learningMethods';
 

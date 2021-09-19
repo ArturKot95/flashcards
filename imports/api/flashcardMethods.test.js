@@ -2,6 +2,7 @@ import { expect }  from 'chai';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 import Collections from '/imports/db/Collections';
 import './flashcardMethods';
+import './tagMethods';
 
 if (Meteor.isServer) {
   describe('Flashcards', function() {
@@ -57,12 +58,24 @@ if (Meteor.isServer) {
     it('Should add tag "german" to flashcards', async function() {
       Meteor.call('flashcard.addTag', flashcardId, 'german');
       const doc = await Collections.find({ _id: collectionId }).fetch()[0];
-      console.log(doc);
       expect(doc.flashcards[0].tags[0]).to.equal('german');
     });
 
+    it('Should prevent adding twice the same tag', async function () {
+      Meteor.call('flashcard.addTag', flashcardId, 'german');
+      const doc = await Collections.find({ _id: collectionId }).fetch()[0];
+      expect(doc.flashcards[0].tags[0]).to.equal('german');
+      expect(doc.flashcards[0].tags).to.have.length(1);
+    });
+
+    it('Should be able to rename tag from "german" to "french"', async function () {
+      Meteor.call('tag.rename', 'german', 'french');
+      const doc = await Collections.find({ _id: collectionId }).fetch()[0];
+      expect(doc.flashcards[0].tags[0]).to.equal('french');
+    });
+
     it('Should remove tag "german" from flashcard', async function() {
-      Meteor.call('flashcard.removeTag', flashcardId, 'german');
+      Meteor.call('flashcard.removeTag', flashcardId, 'french');
       const doc = await Collections.find({ _id: collectionId }).fetch()[0];
       expect(doc.flashcards[0].tags).to.have.length(0);
     });

@@ -39,8 +39,6 @@ export default function LearnPage({ flashcards, onFinish }) {
 
   function keyPressHandler(e) {
     if (revealedRef.current) {
-      console.log('currentCard', currentCard);
-      console.log('currentCardRef', currentCardRef);
       switch (e.key) {
         case '1':
           addReview('easy');
@@ -85,7 +83,6 @@ export default function LearnPage({ flashcards, onFinish }) {
   }
 
   function addReview(rating) {
-    console.log(currentCardRef.current);
     const review = {
       master: currentCardRef.current.master,
       combination: currentCardRef.current.combination,

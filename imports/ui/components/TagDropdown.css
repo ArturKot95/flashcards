@@ -1,0 +1,7 @@
+.tagdropdown-checkbox {
+  float: right;
+}
+
+.tagdropdown-checkbox label::before, .tagdropdown-checkbox label::after {
+  cursor: pointer !important
+}

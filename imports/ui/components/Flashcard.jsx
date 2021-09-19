@@ -110,8 +110,12 @@ export default function Flashcard({flashcard, onCheckboxChange, onRemove, onEdit
           }
 
           <Label.Group size="mini" className="flashcard-tags">
-            <Label >animals</Label>
-            <Label>A1</Label>
+            { flashcard.tags && flashcard.tags.map(tag => 
+              <Label key={tag}>
+                { tag }
+                <Icon name="delete" onClick={() => Meteor.call('flashcard.removeTag', flashcard._id, tag)} />
+              </Label>
+            ) }
           </Label.Group>
           <FlashcardLevel reviews={flashcard.reviews} />
         </Card.Content>

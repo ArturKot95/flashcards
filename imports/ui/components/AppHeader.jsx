@@ -4,7 +4,7 @@ import { Grid, Header, Container, Button, Menu } from 'semantic-ui-react';
 import { useHistory } from 'react-router-dom';
 import { useTracker } from 'meteor/react-meteor-data';
 import Collections from '/imports/db/Collections';
-import NewCollectionModal from './modals/NewCollectionModal';
+import NewCollectionModal from './modals/NewCollectionModal.jsx';
 
 export default function AppHeader() {
   let [modalOpen, setModalOpen] = useState(false);
