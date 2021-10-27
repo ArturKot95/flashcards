@@ -87,14 +87,21 @@ export default function CollectionPage({ collectionId }) {
     filterText = filterText.trim().toLowerCase();
     if (filterText.length >= 3) {
       if (selectedFlashcards.length < displayedFlashcards.length) {
-        setDisplayedFlashcards([
-          ...collection.flashcards.filter(f => {
-            return (f.front.toLowerCase().includes(filterText) ||
-                   f.back.toLowerCase().includes(filterText)) &&
-                   selectedFlashcards.filter(sf => sf._id === f._id).length === 0;
-          }),
-          ...selectedFlashcards
-        ]);
+        if (filterText[0] === '#') {
+          let tag = filterText.substring(1).toLowerCase();
+          setDisplayedFlashcards([
+            ...collection.flashcards.filter(f => 
+              f.tags.includes(tag) &&
+              selectedFlashcards.filter(sf => sf._id === f._id).length === 0
+            )], ...selectedFlashcards);
+        } else {
+          setDisplayedFlashcards([
+            ...collection.flashcards.filter(f => 
+              (f.front.toLowerCase().includes(filterText) ||
+                f.back.toLowerCase().includes(filterText)) &&
+                selectedFlashcards.filter(sf => sf._id === f._id).length === 0
+            )], ...selectedFlashcards);
+        }
       }
       setFilterMode(true);
     } else {
@@ -171,11 +178,11 @@ export default function CollectionPage({ collectionId }) {
     setLearnMode(false);
   }
 
-  // function onEdit(id, { front, back }) {
-  //   setDisplayedFlashcards(displayedFlashcards.reduce((prev, current) => {
-  //     return [...prev, current._id === id ? {...current, _id: id, front, back} : current];
-  //   }, []));
-  // }
+  function onEdit(id, { front, back }) {
+    setDisplayedFlashcards(displayedFlashcards.reduce((prev, current) => {
+      return [...prev, current._id === id ? {...current, _id: id, front, back} : current];
+    }, []));
+  }
 
   function onSelectCheckboxChange(e, value) {
     if (value.checked) {
